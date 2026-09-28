@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B5E73">
+<meta name="description" content="AquaFlow professional RO service, AMC and field technician management platform">
+<title>AquaFlow — RO Service &amp; AMC Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   AquaFlow — design tokens
+   Typography: Manrope (display/headings) + Inter (body/UI text)
+   ===================================================================== */
+:root{
+  /* --- color: light --- */
+  --bg:#F3F7F9; --surface:#FFFFFF; --surface-2:#EDF3F5; --surface-3:#E3ECEE;
+  --ink:#0D2129; --ink-muted:#5C7580; --ink-faint:#8CA0A8; --border:#DCE6E9; --border-soft:#E8EFF1;
+  --teal:#0B5E73; --teal-dark:#073B49; --teal-deep:#052A34; --aqua:#0EA5B7; --aqua-soft:#DFF4F6; --aqua-tint:#F0FAFB;
+  --amber:#A85F0C; --amber-soft:#FBEBD3;
+  --red:#B23327; --red-soft:#FBE4E1;
+  --green:#187645; --green-soft:#E0F3E7;
+  --slate:#64747A; --slate-soft:#EDF1F2;
+  --shadow-xs: 0 1px 2px rgba(13,33,41,.05);
+  --shadow-sm: 0 1px 2px rgba(13,33,41,.05), 0 3px 10px rgba(13,33,41,.05);
+  --shadow-md: 0 2px 6px rgba(13,33,41,.06), 0 10px 26px rgba(13,33,41,.08);
+  --shadow-lg: 0 8px 24px rgba(13,33,41,.10), 0 24px 48px rgba(13,33,41,.12);
+  --focus: 0 0 0 3px rgba(14,165,183,.22);
+  --r-sm:7px; --r-md:11px; --r-lg:16px; --r-xl:22px; --r-full:999px;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:28px; --sp-7:36px; --sp-8:48px;
+  --dur-fast:.12s; --dur-base:.18s; --dur-slow:.32s;
+  --ease: cubic-bezier(.22,.9,.3,1);
+  --font-head: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+  box-sizing: border-box;
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0A171C; --surface:#0F2027; --surface-2:#0D1D23; --surface-3:#122A32;
+  --ink:#E6F0F2; --ink-muted:#8FA6AD; --ink-faint:#5E747B; --border:#1C363E; --border-soft:#17282E;
+  --teal:#3FA9C0; --teal-dark:#0B5E73; --teal-deep:#0EA5B7; --aqua:#2FC3D6; --aqua-soft:#0F2C32; --aqua-tint:#0C2428;
+  --amber:#E0A44C; --amber-soft:#2C2011;
+  --red:#E27A6D; --red-soft:#2C1714;
+  --green:#5FCB8F; --green-soft:#11281C;
+  --slate:#8798A0; --slate-soft:#142428;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.28);
+  --shadow-md: 0 2px 8px rgba(0,0,0,.34), 0 14px 30px rgba(0,0,0,.32);
+  --shadow-lg: 0 10px 26px rgba(0,0,0,.38), 0 30px 60px rgba(0,0,0,.4);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]):not([data-theme="dark"]){
+    --bg:#0A171C; --surface:#0F2027; --surface-2:#0D1D23; --surface-3:#122A32;
+    --ink:#E6F0F2; --ink-muted:#8FA6AD; --ink-faint:#5E747B; --border:#1C363E; --border-soft:#17282E;
+    --teal:#3FA9C0; --teal-dark:#0B5E73; --teal-deep:#0EA5B7; --aqua:#2FC3D6; --aqua-soft:#0F2C32; --aqua-tint:#0C2428;
+    --amber:#E0A44C; --amber-soft:#2C2011;
+    --red:#E27A6D; --red-soft:#2C1714;
+    --green:#5FCB8F; --green-soft:#11281C;
+    --slate:#8798A0; --slate-soft:#142428;
+    --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.3), 0 4px 14px rgba(0,0,0,.28);
+    --shadow-md: 0 2px 8px rgba(0,0,0,.34), 0 14px 30px rgba(0,0,0,.32);
+    --shadow-lg: 0 10px 26px rgba(0,0,0,.38), 0 30px 60px rgba(0,0,0,.4);
+  }
+}
+
+/* =====================================================================
+   Base
+   ===================================================================== */
+*{box-sizing:border-box;}
+html,body{height:100%;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body);
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+h1,h2,h3,h4,.head{font-family:var(--font-head); font-weight:800; letter-spacing:-0.015em; color:var(--ink);}
+a{color:inherit;}
+button{font-family:inherit;}
+svg{display:block;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+::selection{background:var(--aqua-soft); color:var(--teal-dark);}
+
+button,a,input,select,textarea{transition:box-shadow var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease), background var(--dur-base) var(--ease), transform var(--dur-fast) var(--ease), color var(--dur-base) var(--ease), opacity var(--dur-base) var(--ease);}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:none; box-shadow:var(--focus); border-radius:6px;}
+button:disabled{opacity:.45; cursor:not-allowed;}
+
+#app{min-height:100%; height:100%;}
+.hidden{display:none !important;}
+
+@keyframes fadeIn{from{opacity:0;} to{opacity:1;}}
+@keyframes fadeUp{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+@keyframes slideUp{from{transform:translateY(20px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+@keyframes popIn{from{transform:scale(.97); opacity:0;} to{transform:scale(1); opacity:1;}}
+.view-enter{animation:fadeUp .28s var(--ease);}
+
+/* =====================================================================
+   Login
+   ===================================================================== */
+.af-login{min-height:100vh; display:grid; grid-template-columns:minmax(0,1.08fr) minmax(400px,.72fr); background:var(--bg); animation:fadeIn .3s var(--ease);}
+.af-login-hero{
+  position:relative; overflow:hidden; padding:clamp(32px,6vw,80px); display:flex; flex-direction:column; justify-content:space-between; color:#fff;
+  background:
+    radial-gradient(680px 420px at 14% 8%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(520px 420px at 92% 88%, rgba(255,255,255,.08), transparent 55%),
+    linear-gradient(155deg, var(--teal-deep) 0%, var(--teal-dark) 48%, var(--teal) 82%, var(--aqua) 130%);
+}
+.af-login-hero::before{content:'';position:absolute;inset:0;opacity:.5;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(115deg, rgba(255,255,255,.035) 0 2px, transparent 2px 42px);
+}
+.af-login-hero .ripple{position:absolute; border-radius:50%; border:1px solid rgba(255,255,255,.14); pointer-events:none;}
+.af-login-hero .ripple.r1{width:520px; height:520px; right:-200px; top:-200px;}
+.af-login-hero .ripple.r2{width:340px; height:340px; right:-90px; top:-90px;}
+.af-login-hero .ripple.r3{width:300px; height:300px; left:-140px; bottom:-120px;}
+.af-login-brand{position:relative; z-index:1; display:flex; align-items:center; gap:13px;}
+.af-login-brand .logo{width:48px;height:48px;border-radius:var(--r-md);background:#fff;color:var(--teal-dark);display:grid;place-items:center;box-shadow:0 14px 34px rgba(0,0,0,.22);}
+.af-login-brand .logo svg{width:26px;height:26px;}
+.af-login-brand .brand{font:800 21px var(--font-head); letter-spacing:-.01em;}
+.af-login-brand .sub{font-size:12px; color:rgba(255,255,255,.72); font-weight:500; margin-top:1px;}
+.af-login-copy{position:relative; z-index:1; max-width:640px; margin-top:var(--sp-8);}
+.af-login-copy .eyebrow{display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.08); border-radius:var(--r-full); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.09em;}
+.af-login-copy h1{font-size:clamp(32px,4.4vw,52px); line-height:1.06; color:#fff; margin:20px 0 14px; max-width:11ch; font-weight:800; letter-spacing:-.02em;}
+.af-login-copy p{max-width:52ch; color:rgba(255,255,255,.78); font-size:15px; line-height:1.6;}
+.af-feature-grid{position:relative; z-index:1; display:grid; grid-template-columns:repeat(3,1fr); gap:11px; margin-top:var(--sp-6);}
+.af-feature{padding:14px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.065); border-radius:var(--r-md); backdrop-filter:blur(2px);}
+.af-feature strong{display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700;}
+.af-feature strong .ico svg{width:15px!important;height:15px!important;}
+.af-feature span{display:block; font-size:11px; color:rgba(255,255,255,.66); margin-top:4px; line-height:1.4;}
+
+.af-login-panel{display:flex; align-items:center; justify-content:center; padding:36px; background:var(--surface);}
+.af-login-card{width:min(420px,100%); animation:fadeUp .4s var(--ease) .05s both;}
+.af-login-head h2{margin:0; font-size:26px;}
+.af-login-head p{margin:7px 0 24px; color:var(--ink-muted); font-size:13.5px;}
+.af-role-toggle{display:grid; grid-template-columns:1fr 1fr; gap:6px; background:var(--surface-2); padding:5px; border-radius:var(--r-md); margin-bottom:20px;}
+.af-role-toggle button{border:0; background:transparent; color:var(--ink-muted); padding:10px; border-radius:8px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px;}
+.af-role-toggle button svg{width:15px!important;height:15px!important;}
+.af-role-toggle button.active{background:var(--surface); color:var(--teal); box-shadow:var(--shadow-sm);}
+.af-login-card .field{margin-bottom:15px;}
+.af-login-card .field label{color:var(--ink);}
+.af-password{position:relative;}
+.af-password input{padding-right:46px;}
+.af-password .icon-btn{position:absolute; right:5px; top:5px; border:0; background:transparent; width:34px; height:34px;}
+.af-login-submit{width:100%; justify-content:center; height:46px; font-size:14px; letter-spacing:.01em;}
+.af-demo{margin-top:16px; padding:12px 13px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-md); font-size:11.5px; color:var(--ink-muted); line-height:1.7;}
+.af-demo strong{color:var(--ink); font-weight:700;}
+.af-login-footer{text-align:center; margin-top:20px; color:var(--ink-faint); font-size:11px;}
+@media(max-width:900px){
+  .af-login{grid-template-columns:1fr;}
+  .af-login-hero{min-height:300px; padding:30px;}
+  .af-login-copy{margin-top:var(--sp-5);}
+  .af-login-copy h1{font-size:34px; max-width:none;}
+  .af-feature-grid{max-width:560px; margin-top:var(--sp-4);}
+  .af-login-panel{min-height:calc(100vh - 300px); padding:28px 20px;}
+}
+@media(max-width:520px){
+  .af-feature-grid{grid-template-columns:1fr;}
+  .af-feature:nth-child(3){display:none;}
+  .af-login-hero{min-height:260px;}
+  .af-login-copy p{font-size:13.5px;}
+  .af-login-card{max-width:100%;}
+}
+
+/* =====================================================================
+   Admin shell
+   ===================================================================== */
+.admin-shell{display:grid; grid-template-columns:236px 1fr; min-height:100vh;}
+@media (max-width:900px){.admin-shell{grid-template-columns:1fr;}}
+.sidebar{
+  background:linear-gradient(185deg, var(--teal-dark), var(--teal-deep)); color:#EAF4F6; padding:var(--sp-5) var(--sp-3);
+  position:sticky; top:0; height:100vh; overflow-y:auto; display:flex; flex-direction:column;
+  padding-top: calc(var(--sp-5) + env(safe-area-inset-top, 0px));
+}
+@media (max-width:900px){
+  .sidebar{position:fixed; left:0; top:0; height:100dvh; width:264px; z-index:41; transform:translateX(-106%); transition:transform var(--dur-slow) var(--ease); box-shadow:var(--shadow-lg);}
+  .sidebar.open{transform:translateX(0);}
+}
+.sidebar-backdrop{display:none;}
+@media (max-width:900px){.sidebar-backdrop.open{display:block; position:fixed; inset:0; background:rgba(4,14,18,.5); backdrop-filter:blur(1px); z-index:40; animation:fadeIn var(--dur-base) var(--ease);}}
+.sb-brand{display:flex; align-items:center; gap:11px; padding:6px 10px 22px;}
+.sb-brand .ico{width:30px; height:30px; border-radius:9px; background:rgba(255,255,255,.12); display:grid; place-items:center; flex:0 0 auto;}
+.sb-brand .ico svg{width:17px!important;height:17px!important;}
+.sb-brand span{font-family:var(--font-head); font-weight:800; font-size:16px; color:#fff; letter-spacing:-.01em;}
+.sb-nav{display:flex; flex-direction:column; gap:2px; flex:1;}
+.sb-item{
+  display:flex; align-items:center; gap:11px; padding:10px 11px; border-radius:var(--r-sm); cursor:pointer;
+  color:#B7D6DB; font-size:13.3px; font-weight:600; border:none; background:transparent; text-align:left; width:100%; position:relative;
+}
+.sb-item svg{width:17px!important;height:17px!important; flex:0 0 17px; opacity:.85;}
+.sb-item:hover{background:rgba(255,255,255,.07); color:#fff;}
+.sb-item.active{background:rgba(255,255,255,.98); color:var(--teal-deep); font-weight:700;}
+.sb-item.active svg{opacity:1;}
+.sb-foot{margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.1); display:flex; flex-direction:column; gap:2px;}
+.sb-user{display:flex; align-items:center; gap:10px; padding:8px 10px 14px;}
+.sb-user .av{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;font:800 12px var(--font-head); flex:0 0 auto;}
+.sb-user .who{min-width:0;}
+.sb-user .n{color:#fff; font-size:12.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.sb-user .r{color:#9FC4CA; font-size:11px; text-transform:capitalize;}
+
+.main{min-width:0;}
+.topbar{
+  position:sticky; top:0; z-index:5; background:var(--surface); background:color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between; padding:14px 24px; gap:10px;
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+}
+.topbar .title{font-size:20px;}
+.topbar .titlewrap{display:flex; align-items:center; gap:12px; min-width:0;}
+.topbar .actions{display:flex; align-items:center; gap:8px;}
+.hamburger-btn{display:none;}
+@media (max-width:900px){.hamburger-btn{display:inline-flex;}}
+.content{padding:24px; max-width:1320px;}
+@media (max-width:640px){.content{padding:14px;}}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--aqua-soft);color:var(--teal);display:grid;place-items:center;font:800 12px var(--font-head); flex:0 0 auto; border:1px solid var(--border);}
+
+/* =====================================================================
+   Technician shell (mobile-first)
+   ===================================================================== */
+.tech-shell{max-width:520px; margin:0 auto; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; position:relative;}
+.tech-top{
+  position:sticky; top:0; z-index:6; color:#fff; padding:15px 18px;
+  background:linear-gradient(120deg, var(--teal-deep), var(--teal-dark) 60%, var(--teal));
+  padding-top: calc(15px + env(safe-area-inset-top, 0px));
+  display:flex; align-items:center; justify-content:space-between;
+}
+.tech-top .who-row{display:flex; align-items:center; gap:11px;}
+.tech-top .av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font:800 13px var(--font-head); flex:0 0 auto;}
+.tech-top .who{font-size:11.5px; color:#BFE1E6; font-weight:600;}
+.tech-top .name{font-family:var(--font-head); font-weight:800; font-size:16px; letter-spacing:-.01em;}
+.tech-body{flex:1; padding:16px 14px 96px; overflow-y:auto;}
+.tech-bottom{
+  position:sticky; bottom:0; background:var(--surface); background:color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter:blur(10px); border-top:1px solid var(--border);
+  display:flex; justify-content:space-around; padding:7px 4px;
+  padding-bottom: calc(7px + env(safe-area-inset-bottom, 0px));
+}
+.tb-item{display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--ink-faint); font-size:10.5px; font-weight:700; padding:7px 12px; border-radius:12px;}
+.tb-item.active{color:var(--teal); background:var(--aqua-soft);}
+.tb-item svg{width:19px!important;height:19px!important;}
+
+/* =====================================================================
+   Core components
+   ===================================================================== */
+.cards-row{display:grid; grid-template-columns:repeat(auto-fill,minmax(196px,1fr)); gap:12px; margin-bottom:22px;}
+.stat-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:15px 16px; box-shadow:var(--shadow-xs); position:relative; overflow:hidden; padding-left:19px;}
+.stat-card::before{content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--border);}
+.stat-card .label{color:var(--ink-muted); font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.045em;}
+.stat-card .value{font-family:var(--font-head); font-size:25px; font-weight:800; margin-top:6px; letter-spacing:-.02em;}
+.stat-card .sub{font-size:11.5px; color:var(--ink-muted); margin-top:4px;}
+.stat-card.warn::before{background:var(--amber);} .stat-card.warn .value{color:var(--amber);}
+.stat-card.danger::before{background:var(--red);} .stat-card.danger .value{color:var(--red);}
+.stat-card.good::before{background:var(--green);} .stat-card.good .value{color:var(--green);}
+
+.panel{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow-xs); margin-bottom:18px;}
+.panel-head{display:flex; align-items:center; justify-content:space-between; padding:15px 18px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:10px;}
+.panel-head h2{font-size:15px; margin:0; letter-spacing:-.01em;}
+.panel-body{padding:18px;}
+.panel-body.pad0{padding:0;}
+
+.btn{
+  display:inline-flex; align-items:center; gap:6px; border-radius:var(--r-sm); border:1px solid var(--border);
+  background:var(--surface); color:var(--ink); font-size:13px; font-weight:700; padding:8px 14px; cursor:pointer; letter-spacing:-.005em;
+}
+.btn:hover{border-color:var(--teal); color:var(--teal);}
+.btn:active{transform:scale(.97);}
+.btn svg{width:14px!important;height:14px!important; flex:0 0 14px;}
+.btn.primary{background:var(--teal); border-color:var(--teal); color:#fff; box-shadow:0 1px 2px rgba(11,94,115,.15), 0 6px 16px rgba(11,94,115,.18);}
+.btn.primary:hover{background:var(--teal-dark); border-color:var(--teal-dark); color:#fff;}
+.btn.danger{color:var(--red); border-color:var(--red-soft);}
+.btn.danger:hover{background:var(--red-soft); border-color:var(--red-soft); color:var(--red);}
+.btn.ghost{border-color:transparent; background:transparent;}
+.btn.ghost:hover{background:var(--surface-2);}
+.btn.sm{padding:6px 10px; font-size:12px;}
+.btn.block{width:100%; justify-content:center;}
+.btn.big{padding:14px 18px; font-size:14.5px; border-radius:var(--r-md);}
+.icon-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--ink-muted); position:relative; line-height:0; overflow:visible;}
+.icon-btn:hover{color:var(--teal); border-color:var(--teal);}
+.icon-btn:active{transform:scale(.94);}
+.icon-btn svg{width:18px!important;height:18px!important; display:block; flex:0 0 18px; overflow:visible;}
+.icon-btn[title]::after{content:attr(title); position:absolute; bottom:-34px; left:50%; transform:translateX(-50%) translateY(-3px); background:var(--teal-deep); color:#fff; font-size:11px; font-weight:700; padding:5px 9px; border-radius:6px; white-space:nowrap; opacity:0; pointer-events:none; z-index:100; transition:.14s;}
+.icon-btn[title]:hover::after{opacity:1; transform:translateX(-50%) translateY(0);}
+
+table{width:100%; border-collapse:collapse; font-size:13px;}
+th{text-align:left; padding:10px 14px; color:var(--ink-muted); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; font-weight:700; border-bottom:1px solid var(--border); white-space:nowrap;}
+td{padding:11px 14px; border-bottom:1px solid var(--border-soft); vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.table-wrap{overflow-x:auto;}
+.row-link{cursor:pointer;}
+.row-link:hover td{background:var(--surface-2);}
+.muted{color:var(--ink-muted);}
+.mono{font-variant-numeric:tabular-nums; font-feature-settings:"tnum";}
+
+.badge{display:inline-flex; align-items:center; gap:4px; padding:3.5px 10px; border-radius:var(--r-full); font-size:11px; font-weight:700; white-space:nowrap; letter-spacing:.01em;}
+.badge.b-slate{background:var(--slate-soft); color:var(--slate);}
+.badge.b-teal{background:var(--aqua-soft); color:var(--teal);}
+.badge.b-amber{background:var(--amber-soft); color:var(--amber);}
+.badge.b-red{background:var(--red-soft); color:var(--red);}
+.badge.b-green{background:var(--green-soft); color:var(--green);}
+
+.search-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+input,select,textarea{
+  font-family:inherit; font-size:13.5px; padding:9px 12px; border-radius:var(--r-sm); border:1px solid var(--border);
+  background:var(--surface); color:var(--ink); width:100%;
+}
+input::placeholder,textarea::placeholder{color:var(--ink-faint);}
+input:focus,select:focus,textarea:focus{outline:none; box-shadow:var(--focus); border-color:var(--aqua);}
+.field{display:flex; flex-direction:column; gap:5px; margin-bottom:13px;}
+.field label{font-size:12px; font-weight:700; color:var(--ink-muted);}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media (max-width:520px){.field-row{grid-template-columns:1fr;}}
+.search-input{position:relative; flex:1; min-width:180px;}
+
+.empty{padding:44px 16px; text-align:center; color:var(--ink-muted);}
+.empty .big-icon{width:46px; height:46px; margin:0 auto 12px; border-radius:50%; background:var(--surface-2); display:flex; align-items:center; justify-content:center; color:var(--ink-faint);}
+.empty .big-icon svg{width:20px!important;height:20px!important;}
+
+/* Modal */
+.modal-backdrop{position:fixed; inset:0; background:rgba(6,18,24,.52); display:flex; align-items:flex-end; justify-content:center; z-index:50; backdrop-filter:blur(2px); padding:12px; cursor:default; animation:fadeIn var(--dur-base) var(--ease);}
+@media (min-width:640px){.modal-backdrop{align-items:center; padding:20px;}}
+.modal{background:var(--surface); width:100%; max-width:560px; max-height:92vh; overflow-y:auto; border-radius:var(--r-lg) var(--r-lg) 0 0; box-shadow:var(--shadow-lg); animation:slideUp .24s var(--ease); position:relative;}
+@media (min-width:640px){.modal{border-radius:var(--r-lg); animation:popIn .2s var(--ease);}}
+.modal-head{display:flex; align-items:center; justify-content:space-between; padding:17px 18px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); z-index:2; border-radius:var(--r-lg) var(--r-lg) 0 0;}
+.modal-head h3{margin:0; font-size:16.5px;}
+.modal-head .icon-btn{cursor:pointer;}
+.modal-head .icon-btn:hover{background:var(--red-soft); color:var(--red); border-color:var(--red-soft);}
+.modal-body{padding:19px;}
+.modal-foot{padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; position:sticky; bottom:0; background:var(--surface); border-radius:0 0 var(--r-lg) var(--r-lg);}
+.modal-close-btn{width:36px;height:36px;min-width:36px;padding:0;background:var(--surface-2);color:var(--ink);border-color:var(--border);}
+
+/* Toast */
+#toast-wrap{position:fixed; top:16px; right:16px; z-index:99; display:flex; flex-direction:column; gap:8px; max-width:340px;}
+@media (max-width:640px){#toast-wrap{left:16px; right:16px; top:auto; bottom:calc(16px + env(safe-area-inset-bottom,0px)); max-width:none;}}
+.toast{background:var(--teal-deep); color:#fff; padding:11px 16px; border-radius:var(--r-sm); font-size:13px; font-weight:600; box-shadow:var(--shadow-md); animation:slideUp .18s var(--ease);}
+.push-toast{background:var(--surface); color:var(--ink); border:1px solid var(--border); border-left:3px solid var(--amber); padding:12px 34px 12px 14px; border-radius:var(--r-sm); box-shadow:var(--shadow-md); animation:slideUp .2s var(--ease); display:flex; gap:10px; position:relative;}
+.push-toast .pt-icon{color:var(--amber); flex:0 0 auto; width:18px; height:18px; margin-top:1px;}
+.push-toast .pt-icon svg{width:18px!important;height:18px!important;}
+.push-toast .pt-title{font-weight:800; font-size:12.5px;}
+.push-toast .pt-msg{font-size:12px; color:var(--ink-muted); margin-top:1px;}
+.push-toast .pt-close{position:absolute; right:6px; top:6px; border:0; background:transparent; color:var(--ink-faint); width:24px; height:24px; display:grid; place-items:center; border-radius:6px; cursor:pointer;}
+.push-toast .pt-close:hover{background:var(--surface-2); color:var(--red);}
+
+/* Notifications */
+.notif-tabs{display:flex; gap:6px; flex-wrap:wrap;}
+.notif-tabs button{padding:7px 13px; border-radius:var(--r-full); border:1px solid var(--border); background:var(--surface-2); color:var(--ink-muted); font-size:12px; font-weight:700;}
+.notif-tabs button.active{background:var(--teal); color:#fff; border-color:var(--teal);}
+.notif-row{display:flex; gap:12px; padding:15px 18px; border-bottom:1px solid var(--border-soft); cursor:pointer; position:relative;}
+.notif-row:hover{background:var(--surface-2);}
+.notif-row.unread{background:var(--aqua-tint);}
+.notif-row .unread-dot{width:8px;height:8px;border-radius:50%; background:var(--teal); flex:0 0 auto; margin-top:6px;}
+.notif-row .unread-dot.hide{visibility:hidden;}
+.notif-row .notif-close{margin-left:auto; align-self:flex-start; opacity:.55;}
+.notif-row:hover .notif-close{opacity:1;}
+.notif-close svg{width:16px!important;height:16px!important;}
+
+/* Calendar */
+.cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden;}
+.cal-dow{background:var(--surface-2); text-align:center; padding:9px 0; font-size:10.5px; font-weight:700; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.04em;}
+.cal-cell{background:var(--surface); min-height:92px; padding:7px; cursor:pointer;}
+.cal-cell:hover{background:var(--surface-2);}
+.cal-cell.other-month{background:var(--bg); color:var(--ink-faint);}
+.cal-cell .dnum{font-size:12px; font-weight:700; margin-bottom:5px;}
+.cal-cell.today .dnum{display:inline-flex; align-items:center; justify-content:center; width:21px; height:21px; border-radius:50%; background:var(--teal); color:#fff;}
+.cal-dot{display:block; font-size:9.5px; padding:2px 6px; border-radius:5px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;}
+
+/* Bars / donut */
+.bars{display:flex; align-items:flex-end; gap:10px; height:150px; padding-top:10px;}
+.bar-col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:6px;}
+.bar{width:100%; max-width:32px; border-radius:6px 6px 2px 2px; background:var(--teal); transition:height .4s var(--ease);}
+.bar-col .lbl{font-size:10.5px; color:var(--ink-muted); font-weight:700;}
+.bar-col .val{font-size:10.5px; color:var(--ink); font-weight:700;}
+.donut-wrap{display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+.donut{width:124px;height:124px;border-radius:50%; flex:0 0 auto; box-shadow:inset 0 0 0 22px var(--surface);}
+.legend{display:flex; flex-direction:column; gap:7px; font-size:12.5px;}
+.legend .li{display:flex; align-items:center; gap:8px;}
+.legend .dot{width:9px;height:9px;border-radius:3px;}
+
+/* Service / tech cards */
+.svc-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:15px; margin-bottom:10px; box-shadow:var(--shadow-xs);}
+.svc-card .top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:8px;}
+.svc-card .cust{font-weight:800; font-size:14.5px; letter-spacing:-.01em;}
+.svc-card .meta{font-size:12px; color:var(--ink-muted); margin-top:2px; display:flex; align-items:center; gap:5px;}
+.svc-card .meta svg{width:13px!important;height:13px!important; flex:0 0 13px;}
+.svc-card .row{display:flex; gap:8px; margin-top:11px; flex-wrap:wrap;}
+.svc-card .row .btn{flex:1; justify-content:center;}
+.section-title{font-family:var(--font-head); font-weight:800; font-size:15px; margin:24px 0 11px; letter-spacing:-.01em;}
+.section-title:first-child{margin-top:0;}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:760px){.grid2{grid-template-columns:1fr;}}
+
+.timeline{border-left:2px solid var(--border); margin-left:8px; padding-left:17px;}
+.tl-item{position:relative; padding-bottom:17px;}
+.tl-item::before{content:''; position:absolute; left:-22px; top:3px; width:9px; height:9px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 3px var(--aqua-soft);}
+.tl-item .tl-title{font-weight:700; font-size:13px;}
+.tl-item .tl-date{font-size:11.5px; color:var(--ink-muted);}
+
+.kv{display:grid; grid-template-columns:auto 1fr; gap:7px 16px; font-size:13px;}
+.kv dt{color:var(--ink-muted);}
+.kv dd{margin:0; font-weight:600;}
+
+.photo-thumb{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--surface-2);}
+.sig-pad{border:1px dashed var(--border); border-radius:var(--r-sm); touch-action:none; background:var(--surface-2); width:100%; height:120px;}
+
+.action-group{display:flex; gap:5px; align-items:center; justify-content:flex-end;}
+.action-group .icon-btn{width:32px; height:32px;}
+.action-danger{color:var(--red)!important;}
+.action-success{color:var(--green)!important;}
+
+.af-route-note{display:flex; align-items:flex-start; gap:9px; padding:11px 13px; background:var(--aqua-soft); color:var(--teal); border-radius:var(--r-sm); font-size:12px; margin-top:10px;}
+.af-route-note svg{width:16px!important;height:16px!important; flex:0 0 auto; margin-top:1px;}
+.af-danger-zone{border:1px solid var(--red-soft); background:var(--red-soft); border-radius:var(--r-md); padding:13px; margin-top:16px;}
+.af-danger-zone strong{color:var(--red);}
+
+/* Role select (legacy fallback, kept for safety) */
+.gate{min-height:100vh; display:flex; align-items:center; justify-content:center; background:radial-gradient(1200px 500px at 20% -10%, var(--aqua-soft), transparent), var(--bg); padding:32px 20px;}
+.gate-card{max-width:860px; width:100%;}
+.gate-brand{display:flex; align-items:center; gap:12px; margin-bottom:28px;}
+.gate h1{font-size:clamp(28px,4vw,40px); margin:0 0 10px; line-height:1.08; max-width:14ch;}
+.gate p.lede{color:var(--ink-muted); max-width:52ch; margin:0 0 30px; font-size:15.5px;}
+.role-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+@media (max-width:640px){.role-grid{grid-template-columns:1fr;}}
+.role-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:24px; text-align:left; cursor:pointer; box-shadow:var(--shadow-xs);}
+.role-card:hover{border-color:var(--teal); transform:translateY(-2px); box-shadow:var(--shadow-md);}
+
+/* ============================= V8 UI POLISH ============================= */
+.af-save-status{font-size:10.5px;color:var(--ink-faint);white-space:nowrap;padding:0 3px;display:none}
+@media(min-width:760px){.af-save-status{display:inline-block}}
+.af-local-mode{margin-top:12px;padding:9px 11px;border:1px solid var(--border);background:var(--surface-2);border-radius:9px;color:var(--ink-muted);font-size:11px;display:flex;align-items:center;gap:7px}
+.af-local-mode svg{width:15px!important;height:15px!important;color:var(--green)}
+.af-invalid{border-color:var(--red)!important;box-shadow:0 0 0 3px var(--red-soft)!important}
+.af-field-error{color:var(--red);font-size:11px;font-weight:600;margin-top:1px;line-height:1.3}
+.af-confirm-body{display:flex;gap:14px;align-items:flex-start;padding:24px 20px}
+.af-confirm-icon{width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:var(--red-soft);color:var(--red);display:grid;place-items:center}
+.af-confirm-icon svg{width:22px!important;height:22px!important}
+.af-confirm-copy h4{font:800 16px var(--font-head);margin:0 0 6px}.af-confirm-copy p{margin:0;color:var(--ink-muted);font-size:13px;line-height:1.55}
+.af-command-search{position:relative;display:flex;align-items:center;gap:8px;margin-bottom:12px}.af-command-search>span{color:var(--ink-faint)}.af-command-search input{border:0!important;box-shadow:none!important;background:transparent;padding:11px 8px;width:100%}
+.af-command-list{display:flex;flex-direction:column;gap:3px;max-height:48vh;overflow:auto;padding-right:2px}
+.af-command-item{display:flex;align-items:center;gap:10px;border:1px solid transparent;background:transparent;color:var(--ink);padding:10px 11px;border-radius:9px;text-align:left;cursor:pointer;font-weight:600;font-size:12.5px}
+.af-command-item:hover,.af-command-item:focus-visible{background:var(--aqua-tint);border-color:var(--border);color:var(--teal)}
+.af-command-item svg{width:17px!important;height:17px!important;color:var(--teal);flex:0 0 17px}.af-command-item kbd{margin-left:auto;color:var(--ink-faint);font:600 10px var(--font-body)}
+.af-command-sub{font-size:11px;margin-top:2px}.af-command-help{display:flex;gap:15px;border-top:1px solid var(--border);margin-top:12px;padding-top:10px;color:var(--ink-faint);font-size:10.5px}.af-command-help kbd{border:1px solid var(--border);background:var(--surface-2);padding:2px 5px;border-radius:4px;font-size:9px}
+.af-upload-zone{border:1.5px dashed var(--border);border-radius:14px;background:var(--surface-2);padding:28px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}.af-upload-zone strong{font-size:13px}.af-upload-zone span{font-size:11.5px;color:var(--ink-muted)}.af-upload-zone input{margin-top:8px;border:0;background:transparent;width:100%}.af-upload-icon{width:42px;height:42px;border-radius:12px;background:var(--aqua-soft);color:var(--teal);display:grid;place-items:center}.af-upload-icon svg{width:20px!important;height:20px!important}.af-backup-preview{margin-top:10px;padding:10px;border-radius:9px;background:var(--green-soft);color:var(--green);font-size:11px;line-height:1.4}
+.af-diagnostic-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.af-diagnostic-grid>div{padding:12px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;text-align:center}.af-diagnostic-grid strong{display:block;font:800 19px var(--font-head)}.af-diagnostic-grid span{display:block;font-size:10px;color:var(--ink-muted);margin-top:2px}@media(max-width:520px){.af-diagnostic-grid{grid-template-columns:1fr 1fr}}
+.af-diagnostic-status{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px;border-radius:10px}.af-diagnostic-status.good{background:var(--green-soft);color:var(--green)}.af-diagnostic-status.bad{background:var(--red-soft);color:var(--red)}.af-diagnostic-status svg{width:18px!important;height:18px!important;flex:0 0 18px}.af-diagnostic-status strong,.af-diagnostic-status span{display:block}.af-diagnostic-status strong{font-size:12px}.af-diagnostic-status span{font-size:11px;margin-top:2px;opacity:.8}.af-issue-list{margin:10px 0 0;padding-left:19px;color:var(--red);font-size:11.5px;line-height:1.6}
+.af-service-tools{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 18px;padding-top:12px;border-top:1px solid var(--border)}
+@media(max-width:520px){.af-service-tools .btn{flex:1;justify-content:center}.modal-foot{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}.modal{max-height:95dvh}}
+</style>
+</head>
+<body>
+<div id="toast-wrap"></div>
+<div id="app"></div>
+
+<script>
+/* ============================= DATA LAYER ============================= */
+const STORAGE_KEY = 'aquaflow_ro_amc_data_v1';
+const THEME_KEY = 'aquaflow_theme';
+(function bootTheme(){
+  try{
+    const saved = localStorage.getItem(THEME_KEY);
+    if(saved==='light' || saved==='dark') document.documentElement.setAttribute('data-theme', saved);
+  }catch(e){ /* storage unavailable */ }
+})();
+function toggleTheme(){
+  const html = document.documentElement;
+  const prefersDark = typeof window.matchMedia==='function' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const current = html.getAttribute('data-theme') || (prefersDark ? 'dark' : 'light');
+  const next = current==='dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  try{ localStorage.setItem(THEME_KEY, next); }catch(e){ /* storage unavailable */ }
+  render();
+}
+function currentThemeIsDark(){
+  const attr = document.documentElement.getAttribute('data-theme');
+  if(attr) return attr==='dark';
+  return typeof window.matchMedia==='function' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function initials(name){
+  return (name||'').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase() || '?';
+}
+
+function uid(p){ return p+'-'+Math.random().toString(36).slice(2,7)+Date.now().toString(36).slice(-4); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDateTime(iso){ if(!iso) return '—'; const d=new Date(iso); if(isNaN(d)) return iso; return d.toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function addMonths(iso, months){ const d=new Date(iso+'T00:00:00'); d.setMonth(d.getMonth()+Number(months)); return d.toISOString().slice(0,10); }
+function daysDiff(iso){ const a=new Date(todayISO()+'T00:00:00'); const b=new Date(iso+'T00:00:00'); return Math.round((b-a)/86400000); }
+function money(n){ n=Number(n||0); return '₹'+n.toLocaleString('en-IN'); }
+function freqMonths(f){ return ({monthly:1,'2m':2,'3m':3,'4m':4,'6m':6,yearly:12})[f] || 3; }
+function freqLabel(f){ return ({monthly:'Monthly','2m':'Every 2 months','3m':'Every 3 months','4m':'Every 4 months','6m':'Every 6 months',yearly:'Yearly',custom:'Custom'})[f] || f; }
+
+function seedData(){
+  const c1='cust-1001', c2='cust-1002', c3='cust-1003';
+  const r1='ro-2001', r2='ro-2002', r3='ro-2003';
+  const t1='tech-1', t2='tech-2';
+  const today = todayISO();
+  return {
+    customers:[
+      {id:c1, code:'CUS-1001', name:'Rakesh Mehta', mobile:'9825012345', altMobile:'', email:'rakesh.mehta@example.com', type:'Residential', address:'14, Sunrise Society, Adajan', area:'Adajan', city:'Surat', state:'Gujarat', pincode:'395009', status:'Active', createdAt:'2025-11-02'},
+      {id:c2, code:'CUS-1002', name:'Grace Medical Services', mobile:'9998877665', altMobile:'02612345678', email:'admin@gracemedicalservices.in', type:'Hospital', address:'Plot 22, Ring Road', area:'Ring Road', city:'Surat', state:'Gujarat', pincode:'395002', status:'Active', createdAt:'2025-09-14'},
+      {id:c3, code:'CUS-1003', name:'Devansh Foods & Restaurant', mobile:'9723456789', altMobile:'', email:'', type:'Restaurant', address:'B-4, Vesu Main Road', area:'Vesu', city:'Surat', state:'Gujarat', pincode:'395007', status:'Active', createdAt:'2026-01-20'},
+    ],
+    roMachines:[
+      {id:r1, customerId:c1, model:'AquaFresh Grand+', brand:'AquaFresh', serial:'AF-88213', purificationType:'RO+UV+UF', installDate:'2025-11-05', purchaseDate:'2025-11-02', warrantyEnd:'2026-11-05', serviceFrequency:'3m', lastServiceDate:addMonths(today,-3), nextServiceDate:today, location:'Kitchen', status:'Active'},
+      {id:r2, customerId:c2, model:'MedPure Commercial 100LPH', brand:'MedPure', serial:'MP-51190', purificationType:'Commercial RO', installDate:'2025-09-18', purchaseDate:'2025-09-14', warrantyEnd:'2027-09-18', serviceFrequency:'monthly', lastServiceDate:addMonths(today,-1), nextServiceDate:addMonths(today,1), location:'Pantry - 2nd Floor', status:'Active'},
+      {id:r3, customerId:c3, model:'ChefLine Duo 50LPH', brand:'ChefLine', serial:'CL-30044', purificationType:'RO+UV', installDate:'2026-01-22', purchaseDate:'2026-01-20', warrantyEnd:'2027-01-22', serviceFrequency:'2m', lastServiceDate:addMonths(today,-2), nextServiceDate:addMonths(today,-4), location:'Kitchen store', status:'Under Service'},
+    ],
+    amcs:[
+      {id:'amc-1', customerId:c1, roId:r1, plan:'Silver AMC', startDate:'2025-11-05', endDate:addMonths(today,1), amount:2400, paymentStatus:'Paid', servicesIncluded:4, servicesUsed:1, status:'Active', terms:'4 services/year, parts extra except membrane.'},
+      {id:'amc-2', customerId:c2, roId:r2, plan:'Commercial Gold AMC', startDate:'2025-09-18', endDate:addMonths(today,9), amount:14000, paymentStatus:'Paid', servicesIncluded:12, servicesUsed:1, status:'Active', terms:'Monthly visits, all filters & membrane included.'},
+      {id:'amc-3', customerId:c3, roId:r3, plan:'Basic AMC', startDate:'2026-01-22', endDate:addMonths(today,-2), amount:1800, paymentStatus:'Pending', servicesIncluded:3, servicesUsed:3, status:'Expired', terms:'3 services/year.'},
+    ],
+    technicians:[
+      {id:t1, name:'Suresh Patil', mobile:'9898001122', email:'suresh.p@aquaflow.in', status:'Active'},
+      {id:t2, name:'Iqbal Sheikh', mobile:'9898003344', email:'iqbal.s@aquaflow.in', status:'Active'},
+    ],
+    services:[
+      {id:'svc-5001', customerId:c1, roId:r1, type:'AMC Service', requestDate:addMonths(today,0), scheduledDate:today, dueDate:today, technicianId:t1, priority:'Normal', status:'Assigned', complaint:'Routine quarterly service', remarks:'', workPerformed:'', partsUsed:[], laborCost:0, partsCost:0, additionalCharges:0, discount:0, totalAmount:0, paymentStatus:'Pending', paymentMode:'', beforePhoto:'', afterPhoto:'', signature:'', completedAt:''},
+      {id:'svc-5002', customerId:c3, roId:r3, type:'Repair', requestDate:addMonths(today,0), scheduledDate:addMonths(today,-1), dueDate:addMonths(today,-1), technicianId:t2, priority:'High', status:'In Progress', complaint:'Low water flow, unusual noise from pump', remarks:'Diagnosed pump issue, ordering spare', workPerformed:'', partsUsed:[], laborCost:0, partsCost:0, additionalCharges:0, discount:0, totalAmount:0, paymentStatus:'Pending', paymentMode:'', beforePhoto:'', afterPhoto:'', signature:'', completedAt:''},
+      {id:'svc-5003', customerId:c2, roId:r2, type:'AMC Service', requestDate:addMonths(today,-1), scheduledDate:addMonths(today,-1), dueDate:addMonths(today,-1), technicianId:t1, priority:'Normal', status:'Completed', complaint:'Monthly maintenance', remarks:'All filters checked, sediment filter replaced', workPerformed:'Sediment filter replacement, general cleaning', partsUsed:[{name:'Sediment Filter',qty:1,cost:250}], laborCost:300, partsCost:250, additionalCharges:0, discount:0, totalAmount:550, paymentStatus:'Paid', paymentMode:'UPI', beforePhoto:'', afterPhoto:'', signature:'Received by Front Desk', completedAt:addMonths(today,-1)+'T11:20'},
+      {id:'svc-5004', customerId:c1, roId:r1, type:'Filter Replacement', requestDate:addMonths(today,-3), scheduledDate:addMonths(today,-3), dueDate:addMonths(today,-3), technicianId:t2, priority:'Normal', status:'Completed', complaint:'Scheduled filter change', remarks:'Replaced pre & post carbon filters', workPerformed:'Pre-carbon & post-carbon filter replaced', partsUsed:[{name:'Pre Carbon Filter',qty:1,cost:180},{name:'Post Carbon Filter',qty:1,cost:180}], laborCost:250, partsCost:360, additionalCharges:0, discount:50, totalAmount:560, paymentStatus:'Paid', paymentMode:'Cash', beforePhoto:'', afterPhoto:'', signature:'Rakesh Mehta', completedAt:addMonths(today,-3)+'T15:05'},
+      {id:'svc-5005', customerId:c3, roId:r3, type:'Complaint', requestDate:today, scheduledDate:'', dueDate:'', technicianId:'', priority:'High', status:'New', complaint:'Water has slight odor since yesterday', remarks:'', workPerformed:'', partsUsed:[], laborCost:0, partsCost:0, additionalCharges:0, discount:0, totalAmount:0, paymentStatus:'Pending', paymentMode:'', beforePhoto:'', afterPhoto:'', signature:'', completedAt:''},
+    ],
+    settings:{ serviceReminderDays:[1,2,3,7], amcReminderDays:[60,30,15,7,1], companyName:'AquaFlow RO Services', pushEnabled:true },
+    notificationsRead:{},
+    notificationsDismissed:{},
+    users:[
+      {id:'usr-admin', username:'admin', password:'admin123', role:'admin', technicianId:'', name:'Administrator', status:'Active'},
+      {id:'usr-tech-1', username:'suresh', password:'tech123', role:'technician', technicianId:'tech-001', name:'Suresh Patil', status:'Active'},
+      {id:'usr-tech-2', username:'iqbal', password:'tech123', role:'technician', technicianId:'tech-002', name:'Iqbal Sheikh', status:'Active'},
+    ],
+  };
+}
+
+let DB = load();
+function migrateV4(){
+  DB.users = Array.isArray(DB.users) ? DB.users : [];
+  DB.notificationsDismissed = (DB.notificationsDismissed && typeof DB.notificationsDismissed==='object') ? DB.notificationsDismissed : {};
+  if(!DB.users.some(u=>u.role==='admin')) DB.users.unshift({id:'usr-admin',username:'admin',password:'admin123',role:'admin',technicianId:'',name:'Administrator',status:'Active'});
+
+  // Normalize the two demo technicians without creating duplicate Suresh/Iqbal records.
+  DB.technicians = Array.isArray(DB.technicians) ? DB.technicians : [];
+  const canonical = [
+    {code:'TECH-001', name:'Suresh Patil', mobile:'9898001122', email:'suresh.p@aquaflow.in'},
+    {code:'TECH-002', name:'Iqbal Sheikh', mobile:'9898003344', email:'iqbal.s@aquaflow.in'}
+  ];
+  const techIdMap = {};
+  canonical.forEach((base,idx)=>{
+    const oldIds = idx===0 ? ['tech-1','tech-001'] : ['tech-2','tech-002'];
+    let t = DB.technicians.find(x=>x.code===base.code) || DB.technicians.find(x=>x.id===oldIds[0]) || DB.technicians.find(x=>x.name===base.name);
+    if(!t){ t={id:oldIds[0],status:'Active'}; DB.technicians.push(t); }
+    t.code=base.code; t.name=base.name; t.mobile=t.mobile||base.mobile; t.email=t.email||base.email; t.status=t.status||'Active';
+    techIdMap[base.code]=t.id;
+    // Repoint service/user records from legacy duplicate IDs to the canonical ID.
+    DB.services = Array.isArray(DB.services) ? DB.services : [];
+    oldIds.forEach(oldId=>{ DB.services.forEach(svc=>{ if(svc.technicianId===oldId) svc.technicianId=t.id; }); });
+    DB.users.forEach(u=>{ if(u.technicianId===oldIds[0] || u.technicianId===oldIds[1] || u.name===base.name || u.username===base.name.split(' ')[0].toLowerCase()){ u.technicianId=t.id; u.name=base.name; u.username=base.name.split(' ')[0].toLowerCase(); u.role='technician'; u.status=t.status; } });
+  });
+  // Remove duplicate demo technicians left by older migrations, preserving referenced canonical records.
+  const keepIds=new Set(Object.values(techIdMap));
+  DB.technicians = DB.technicians.filter(t=>!['tech-001','tech-002'].includes(t.id) || keepIds.has(t.id));
+  canonical.forEach((base,idx)=>{
+    const tid=techIdMap[base.code];
+    if(!DB.users.some(u=>u.technicianId===tid && u.role==='technician')){
+      DB.users.push({id:'usr-'+tid,username:base.name.split(' ')[0].toLowerCase(),password:'tech123',role:'technician',technicianId:tid,name:base.name,status:'Active'});
+    }
+  });
+
+  DB.customers = Array.isArray(DB.customers)?DB.customers:[];
+  DB.customers.forEach(c=>{ c.waterRoType=c.waterRoType||c.purificationType||'RO'; c.installDate=c.installDate||''; c.installBy=c.installBy||''; c.dueAmcDate=c.dueAmcDate||''; c.status=c.status||'Active'; });
+  DB.roMachines = Array.isArray(DB.roMachines)?DB.roMachines:[];
+  DB.roMachines.forEach(r=>{ r.roType=r.roType||r.purificationType||'RO'; r.price=Number(r.price||0); r.details=r.details||''; });
+  persist();
+}
+migrateV4();
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(!parsed.notificationsRead) parsed.notificationsRead = {};
+      if(!parsed.notificationsDismissed) parsed.notificationsDismissed = {};
+      if(!parsed.settings) parsed.settings = seedData().settings;
+      if(parsed.settings.pushEnabled === undefined) parsed.settings.pushEnabled = true;
+      return parsed;
+    }
+  }catch(e){ /* storage unavailable */ }
+  const seeded = seedData();
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded)); }catch(e){}
+  return seeded;
+}
+function persist(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); }catch(e){ toast('Could not save — storage unavailable'); }
+}
+
+/* ---- lookups ---- */
+const byId = (arr,id) => arr.find(x=>x.id===id);
+const custName = id => { const c=byId(DB.customers,id); return c?c.name:'—'; };
+const custObj = id => byId(DB.customers,id);
+const roObj = id => byId(DB.roMachines,id);
+const techName = id => { const t=byId(DB.technicians,id); return t?t.name:'Unassigned'; };
+const amcForRo = roId => DB.amcs.find(a=>a.roId===roId);
+const currentUser = () => (DB.users||[]).find(u=>u.id===STATE.userId) || null;
+
+/* ============================= STATE ============================= */
+let STATE = {
+  role: null, // 'admin' | 'technician'
+  loginRole: 'admin',
+  userId: null,
+  username: '',
+  technicianId: null,
+  adminView: 'dashboard',
+  techView: 'today',
+  editing: {}, // scratch for modal forms
+  calMonth: new Date().getMonth(),
+  calYear: new Date().getFullYear(),
+  filters:{ customers:'', ro:'', amc:'', services:'', servicesStatus:'', reqOnly:false },
+  activeCustomerId:null,
+  activeServiceId:null,
+  activeTechServiceId:null,
+  modal:null,
+  sidebarOpen:false,
+  notifFilter:'all',
+  pushChecked:false,
+};
+
+/* ============================= ICONS ============================= */
+const ICONS = {
+  drop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s7 8.2 7 13a7 7 0 1 1-14 0c0-4.8 7-13 7-13Z"/></svg>',
+  dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.5" cy="8.5" r="2.6"/><path d="M15.5 14.2c2.8.3 5 2.5 5 5.8"/></svg>',
+  ro:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.8-3 8.3-7 9-4-.7-7-4.2-7-9V6l7-3Z"/></svg>',
+  wrench:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.6 4.6L3 17l2 2 6.1-6.1a4 4 0 0 0 4.6-5.6l-2.6 2.6-2-2 2.6-2.6Z"/></svg>',
+  clipboard:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1M9 11h6M9 15h6"/></svg>',
+  tech:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-4.1 3.4-7 7.5-7s7.5 2.9 7.5 7"/></svg>',
+  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9a6 6 0 1 1 12 0c0 4.5 1.4 6 1.4 6H4.6S6 13.5 6 9Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg>',
+  chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>',
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 13.6a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H4a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V4a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9V10c.1.7.6 1.3 1.3 1.6h.3a2 2 0 1 1 0 4h-.2c-.7.1-1.3.6-1.5 1Z"/></svg>',
+  log:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',
+  logout:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v3a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 4Z"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-7.1 7-12a7 7 0 1 0-14 0c0 4.9 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg>',
+  camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="14" r="3.5"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12l5 5L20 6"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13M7 11l5 5 5-5M4 21h16"/></svg>',
+  bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>',
+  history:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5M12 7v5l3 3"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c0-4.1 3.4-7 7.5-7s7.5 2.9 7.5 7"/></svg>',
+  eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  eyeOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l18 18"/><path d="M10.6 6.2A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-3 3.7M6.1 6.1C3.7 8.1 2.5 12 2.5 12s3.5 6 9.5 6a9.6 9.6 0 0 0 3.1-.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+  chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg>',
+  chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>',
+  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11Z"/></svg>',
+};
+function ic(name,cls){ return `<span class="${cls||''}" style="display:inline-flex">${ICONS[name]||''}</span>`; }
+
+/* ============================= TOAST ============================= */
+function toast(msg){
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className='toast'; el.textContent=msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 2200);
+}
+function pushToast(title, msg){
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className='push-toast';
+  el.innerHTML = `<button class="pt-close" data-action="close-push-toast" title="Close notification">${ICONS.x}</button><div class="pt-icon">${ICONS.bell}</div><div><div class="pt-title">${title}</div><div class="pt-msg">${msg}</div></div>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 4500);
+}
+function togglePushEnabled(val){ DB.settings.pushEnabled = val; persist(); }
+function requestPushPermission(){
+  try{
+    if(typeof Notification==='undefined'){ toast('Browser notifications are not available in this preview'); return; }
+    Notification.requestPermission().then(perm=>{
+      if(perm==='granted') toast('Browser notifications enabled'); else toast('Notifications not allowed — in-app reminders will still show');
+      render();
+    });
+  }catch(e){ toast('Browser notifications are not available in this preview'); }
+}
+/* Simulated "push": surfaces due-today service reminders as soon as the admin opens the app */
+function maybeShowPushReminders(){
+  if(!DB.settings.pushEnabled) return;
+  const dueTodayUnread = buildNotifications().filter(n=>n.dueToday && !n.read);
+  if(!dueTodayUnread.length) return;
+  dueTodayUnread.slice(0,4).forEach((n,i)=>{
+    setTimeout(()=>{
+      pushToast(n.title, n.msg);
+      try{
+        if(typeof Notification!=='undefined' && Notification.permission==='granted'){
+          new Notification(n.title, {body:n.msg});
+        }
+      }catch(e){ /* notifications unavailable in this context */ }
+    }, i*350);
+  });
+}
+
+/* ============================= STATUS HELPERS ============================= */
+function amcStatus(amc){
+  if(amc.status==='Cancelled') return 'Cancelled';
+  const d = daysDiff(amc.endDate);
+  if(d<0) return 'Expired';
+  if(d<=30) return 'Expiring Soon';
+  if(amc.status==='Draft') return 'Draft';
+  return 'Active';
+}
+function amcBadge(amc){
+  const s = amcStatus(amc);
+  const map = {Active:'b-green', 'Expiring Soon':'b-amber', Expired:'b-red', Cancelled:'b-slate', Draft:'b-slate'};
+  return `<span class="badge ${map[s]}">${s}</span>`;
+}
+function serviceBadge(svc){
+  const map = {New:'b-slate', Pending:'b-slate', Scheduled:'b-teal', Assigned:'b-teal', 'On the Way':'b-teal', 'In Progress':'b-amber', 'Waiting for Parts':'b-amber', Completed:'b-green', Cancelled:'b-red', Rescheduled:'b-amber', 'Customer Not Available':'b-red'};
+  let extra='';
+  if(!['Completed','Cancelled'].includes(svc.status) && svc.dueDate && daysDiff(svc.dueDate)<0) extra=' (Overdue)';
+  return `<span class="badge ${map[svc.status]||'b-slate'}">${svc.status}${extra}</span>`;
+}
+function roStatusBadge(ro){
+  const map={Active:'b-green','Under Service':'b-amber',Inactive:'b-slate',Replaced:'b-slate'};
+  return `<span class="badge ${map[ro.status]||'b-slate'}">${ro.status}</span>`;
+}
+function isOverdue(svc){ return !['Completed','Cancelled'].includes(svc.status) && svc.dueDate && daysDiff(svc.dueDate)<0; }
+function isDueToday(svc){ return !['Completed','Cancelled'].includes(svc.status) && svc.dueDate===todayISO(); }
+function isDueTomorrow(svc){ const t=new Date(); t.setDate(t.getDate()+1); return !['Completed','Cancelled'].includes(svc.status) && svc.dueDate===t.toISOString().slice(0,10); }
+
+/* ============================= NOTIFICATIONS ENGINE ============================= */
+function buildNotifications(){
+  const list = [];
+  DB.services.forEach(s=>{
+    if(['Completed','Cancelled'].includes(s.status) || !s.dueDate) return;
+    const d = daysDiff(s.dueDate);
+    if(d<0) list.push({sev:'danger', icon:'wrench', title:'Service overdue', msg:`${custName(s.customerId)} — ${s.type} was due ${fmtDate(s.dueDate)}`, date:s.dueDate, ref:s.id, kind:'service', dueToday:false});
+    else if(d===0) list.push({sev:'amber', icon:'wrench', title:'Service due today', msg:`${custName(s.customerId)} — ${s.type}, tech: ${techName(s.technicianId)}`, date:s.dueDate, ref:s.id, kind:'service', dueToday:true});
+    else if(d===1) list.push({sev:'teal', icon:'wrench', title:'Service due tomorrow', msg:`${custName(s.customerId)} — ${s.type}`, date:s.dueDate, ref:s.id, kind:'service', dueToday:false});
+  });
+  DB.amcs.forEach(a=>{
+    if(a.status==='Cancelled') return;
+    const d = daysDiff(a.endDate);
+    const thresholds = DB.settings.amcReminderDays.slice().sort((x,y)=>x-y);
+    if(d<0) list.push({sev:'danger', icon:'shield', title:'AMC expired', msg:`${custName(a.customerId)} — ${a.plan} expired ${fmtDate(a.endDate)}`, date:a.endDate, ref:a.id, kind:'amc', dueToday:false});
+    else if(thresholds.includes(d)) list.push({sev:'amber', icon:'shield', title:`AMC expiring in ${d} day${d===1?'':'s'}`, msg:`${custName(a.customerId)} — ${a.plan}`, date:a.endDate, ref:a.id, kind:'amc', dueToday:d===0});
+    else if(d<=7) list.push({sev:'amber', icon:'shield', title:'AMC expiring soon', msg:`${custName(a.customerId)} — ${a.plan}, ${d} day(s) left`, date:a.endDate, ref:a.id, kind:'amc', dueToday:false});
+  });
+  DB.services.forEach(s=>{
+    if(s.status==='Completed' && s.paymentStatus==='Pending') list.push({sev:'amber', icon:'clipboard', title:'Payment pending', msg:`${custName(s.customerId)} — ${money(s.totalAmount)} pending for ${s.type}`, date:s.completedAt||s.dueDate, ref:s.id, kind:'payment', dueToday:false});
+  });
+  DB.services.forEach(s=>{
+    if(s.status==='New') list.push({sev:'teal', icon:'clipboard', title:'New service request', msg:`${custName(s.customerId)} — ${s.complaint||s.type}`, date:s.requestDate, ref:s.id, kind:'request', dueToday:false});
+  });
+  list.forEach(n=>{ n.id = `${n.kind}:${n.ref}:${n.title}`.replace(/\s+/g,'_'); n.read = !!DB.notificationsRead[n.id]; n.dismissed = !!DB.notificationsDismissed[n.id]; });
+  return list.filter(n=>!n.dismissed);
+  list.sort((a,b)=> (a.date<b.date?-1:1));
+  return list;
+}
+function toggleNotifRead(id){ DB.notificationsRead[id] = !DB.notificationsRead[id]; persist(); render(); }
+function markAllNotifsRead(){ buildNotifications().forEach(n=>{ DB.notificationsRead[n.id]=true; }); persist(); toast('All notifications marked read'); render(); }
+function dismissNotification(id){ if(!id)return; DB.notificationsDismissed[id]=true; persist(); toast('Notification dismissed'); render(); }
+
+/* ============================= APP RENDER ROOT ============================= */
+function render(){
+  const app = document.getElementById('app');
+  if(STATE.role===null){ app.innerHTML = gateHTML(); return; }
+  if(STATE.role==='admin'){ app.innerHTML = adminShellHTML(); afterAdminRender(); return; }
+  if(STATE.role==='technician'){ app.innerHTML = techShellHTML(); afterTechRender(); return; }
+}
+
+/* ---------------- GATE ---------------- */
+function gateHTML(){
+  const role = STATE.loginRole || 'admin';
+  return `
+  <div class="af-login">
+    <section class="af-login-hero">
+      <div class="af-login-brand"><div class="logo">${ic('drop')}</div><div><div class="brand">AquaFlow</div><div class="sub">RO Service &amp; AMC Manager</div></div></div>
+      <div class="af-login-copy"><span class="eyebrow">Service operations</span><h1>Run every RO service with clarity.</h1><p>Manage customers, installations, AMC plans, service schedules, technicians and job completion from one professional workspace.</p></div>
+      <div class="af-feature-grid"><div class="af-feature"><strong>${ic('users')} Customer 360</strong><span>Installation, RO and service history</span></div><div class="af-feature"><strong>${ic('calendar')} Smart scheduling</strong><span>Due dates and technician jobs</span></div><div class="af-feature"><strong>${ic('shield')} AMC control</strong><span>Renewals and reminders</span></div></div>
+    </section>
+    <section class="af-login-panel"><div class="af-login-card">
+      <div class="af-login-head"><h2>Welcome back</h2><p>Sign in to continue to your AquaFlow workspace.</p></div>
+      <div class="af-role-toggle"><button type="button" class="${role==='admin'?'active':''}" data-action="login-role" data-role="admin">${ic('dash')} Admin</button><button type="button" class="${role==='technician'?'active':''}" data-action="login-role" data-role="technician">${ic('tech')} Technician</button></div>
+      <form data-action="submit-login" autocomplete="on">
+        <input type="hidden" name="role" value="${role}">
+        <div class="field"><label>User ID</label><input name="username" id="login-username" autocomplete="username" placeholder="Enter your user ID" required autofocus></div>
+        <div class="field"><label>Password</label><div class="af-password"><input name="password" id="login-password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button type="button" class="icon-btn" data-action="toggle-password" title="Show password">${ic('eye')}</button></div></div>
+        <button type="submit" class="btn primary af-login-submit">${ic('logout')} Sign in</button>
+      </form>
+      <div class="af-demo"><strong>Demo access</strong><br>Admin: <b>admin</b> / <b>admin123</b><br>Technician: <b>suresh</b> / <b>tech123</b> &nbsp; <b>iqbal</b> / <b>tech123</b></div>
+      <div class="af-login-footer">Secure role-based workspace · AquaFlow</div>
+    </div></section>
+  </div>`;
+}
+
+/* ---------------- ADMIN SHELL ---------------- */
+const ADMIN_NAV = [
+  {id:'dashboard', label:'Dashboard', icon:'dash'},
+  {id:'customers', label:'Customers', icon:'users'},
+  {id:'ro', label:'RO Machines', icon:'ro'},
+  {id:'amc', label:'AMC', icon:'shield'},
+  {id:'services', label:'Services', icon:'wrench'},
+  {id:'requests', label:'Service Requests', icon:'clipboard'},
+  {id:'technicians', label:'Technicians', icon:'tech'},
+  {id:'calendar', label:'Calendar', icon:'calendar'},
+  {id:'notifications', label:'Notifications', icon:'bell'},
+  {id:'reports', label:'Reports', icon:'chart'},
+  {id:'settings', label:'Settings', icon:'gear'},
+];
+function adminShellHTML(){
+  const notifCount = buildNotifications().filter(n=>!n.read && (n.sev==='danger'||n.sev==='amber')).length;
+  const u = currentUser();
+  return `
+  <div class="admin-shell">
+    <div class="sidebar-backdrop ${STATE.sidebarOpen?'open':''}" data-action="close-sidebar"></div>
+    <aside class="sidebar ${STATE.sidebarOpen?'open':''}">
+      <div class="sb-brand"><span class="ico">${ic('drop')}</span><span>AquaFlow</span></div>
+      <nav class="sb-nav">
+        ${ADMIN_NAV.map(n=>`<button class="sb-item ${STATE.adminView===n.id?'active':''}" data-action="nav" data-view="${n.id}">${ic(n.icon)}<span>${n.label}</span>${n.id==='notifications'&&notifCount?`<span class="badge b-red" style="margin-left:auto">${notifCount}</span>`:''}</button>`).join('')}
+      </nav>
+      <div class="sb-foot">
+        ${u ? `<div class="sb-user"><div class="av">${initials(u.name)}</div><div class="who"><div class="n">${u.name}</div><div class="r">${u.role}</div></div></div>` : ''}
+        <button class="sb-item" data-action="toggle-theme">${ic(currentThemeIsDark()?'sun':'moon')}<span>${currentThemeIsDark()?'Light mode':'Dark mode'}</span></button>
+        <button class="sb-item" data-action="logout">${ic('logout')}<span>Sign out</span></button>
+      </div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div class="titlewrap">
+          <button class="icon-btn hamburger-btn" data-action="toggle-sidebar" title="Menu">${ic('log')}</button>
+          <div class="title head">${ADMIN_NAV.find(n=>n.id===STATE.adminView)?.label || ''}</div>
+        </div>
+        <div class="actions">
+          <button class="icon-btn" data-action="nav" data-view="notifications" aria-label="Notifications" title="Notifications" style="position:relative">${ic('bell')}${notifCount?`<span class="badge b-red" style="position:absolute; top:-6px; right:-6px; padding:1px 5px">${notifCount}</span>`:''}</button>
+          <div class="muted" style="font-size:12.5px">${new Date().toLocaleDateString('en-IN',{weekday:'short', day:'2-digit', month:'short'})}</div>
+        </div>
+      </div>
+      <div class="content" id="admin-content"></div>
+    </div>
+  </div>
+  <div id="modal-root"></div>`;
+}
+function afterAdminRender(){
+  document.getElementById('admin-content').innerHTML = `<div class="view-enter">${adminViewHTML()}</div>`;
+  renderModal();
+}
+function adminViewHTML(){
+  switch(STATE.adminView){
+    case 'dashboard': return viewDashboard();
+    case 'customers': return STATE.activeCustomerId ? viewCustomerProfile(STATE.activeCustomerId) : viewCustomers();
+    case 'ro': return viewRO();
+    case 'amc': return viewAMC();
+    case 'services': return STATE.activeServiceId ? viewServiceDetail(STATE.activeServiceId,'admin') : viewServices(false);
+    case 'requests': return viewServices(true);
+    case 'technicians': return viewTechnicians();
+    case 'calendar': return viewCalendar();
+    case 'notifications': return viewNotifications();
+    case 'reports': return viewReports();
+    case 'settings': return viewSettings();
+    default: return '';
+  }
+}
+
+/* ---------------- DASHBOARD ---------------- */
+function viewDashboard(){
+  const svc = DB.services;
+  const totalCust = DB.customers.length;
+  const activeCust = DB.customers.filter(c=>c.status==='Active').length;
+  const totalRO = DB.roMachines.length;
+  const activeAMC = DB.amcs.filter(a=>amcStatus(a)==='Active').length;
+  const expiringAMC = DB.amcs.filter(a=>amcStatus(a)==='Expiring Soon').length;
+  const dueToday = svc.filter(isDueToday).length;
+  const dueTomorrow = svc.filter(isDueTomorrow).length;
+  const overdue = svc.filter(isOverdue).length;
+  const openReq = svc.filter(s=>['New','Pending'].includes(s.status)).length;
+  const assigned = svc.filter(s=>['Assigned','Scheduled','On the Way'].includes(s.status)).length;
+  const completed = svc.filter(s=>s.status==='Completed').length;
+  const pendingPay = svc.filter(s=>s.paymentStatus==='Pending' && s.status==='Completed').reduce((a,s)=>a+Number(s.totalAmount||0),0);
+  const totalRevenue = svc.filter(s=>s.paymentStatus==='Paid').reduce((a,s)=>a+Number(s.totalAmount||0),0);
+  const thisMonth = todayISO().slice(0,7);
+  const monthlyRevenue = svc.filter(s=>s.paymentStatus==='Paid' && (s.completedAt||'').slice(0,7)===thisMonth).reduce((a,s)=>a+Number(s.totalAmount||0),0);
+
+  const cards = [
+    ['Total Customers', totalCust, ''],
+    ['Active Customers', activeCust, 'good'],
+    ['Total RO Machines', totalRO, ''],
+    ['Active AMC', activeAMC, 'good'],
+    ['AMC Expiring Soon', expiringAMC, expiringAMC?'warn':''],
+    ['Services Due Today', dueToday, dueToday?'warn':''],
+    ['Services Due Tomorrow', dueTomorrow, ''],
+    ['Overdue Services', overdue, overdue?'danger':''],
+    ['Open Service Requests', openReq, openReq?'warn':''],
+    ['Assigned Services', assigned, ''],
+    ['Completed Services', completed, 'good'],
+    ['Pending Payments', money(pendingPay), pendingPay?'warn':''],
+    ['Total Revenue', money(totalRevenue), 'good'],
+    ['Monthly Revenue', money(monthlyRevenue), 'good'],
+  ];
+
+  // monthly service count last 6 months
+  const months=[];
+  for(let i=5;i>=0;i--){ const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()-i); months.push(d.toISOString().slice(0,7)); }
+  const counts = months.map(m=> svc.filter(s=>(s.completedAt||s.scheduledDate||'').slice(0,7)===m).length);
+  const maxCount = Math.max(1,...counts);
+  const revByMonth = months.map(m=> svc.filter(s=>s.paymentStatus==='Paid' && (s.completedAt||'').slice(0,7)===m).reduce((a,s)=>a+Number(s.totalAmount||0),0));
+  const maxRev = Math.max(1,...revByMonth);
+
+  const statusCounts = {};
+  svc.forEach(s=>{ statusCounts[s.status]=(statusCounts[s.status]||0)+1; });
+  const statusColors = {New:'#6B7A80',Pending:'#6B7A80',Scheduled:'#0EA5B7',Assigned:'#0EA5B7','On the Way':'#0EA5B7','In Progress':'#B4690E','Waiting for Parts':'#B4690E',Completed:'#1E7A46',Cancelled:'#C23A2E',Rescheduled:'#B4690E','Customer Not Available':'#C23A2E'};
+  const donutStops = [];
+  let acc=0;
+  const total = svc.length||1;
+  Object.entries(statusCounts).forEach(([k,v])=>{ const pct=v/total*100; donutStops.push(`${statusColors[k]||'#999'} ${acc}% ${acc+pct}%`); acc+=pct; });
+
+  return `
+  <div class="cards-row">
+    ${cards.map(([l,v,cls])=>`<div class="stat-card ${cls}"><div class="label">${l}</div><div class="value">${v}</div></div>`).join('')}
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-head"><h2>Monthly service count</h2></div>
+      <div class="panel-body">
+        <div class="bars">
+          ${months.map((m,i)=>`<div class="bar-col"><div class="val">${counts[i]}</div><div class="bar" style="height:${counts[i]/maxCount*100}%"></div><div class="lbl">${new Date(m+'-01').toLocaleDateString('en-IN',{month:'short'})}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Monthly revenue</h2></div>
+      <div class="panel-body">
+        <div class="bars">
+          ${months.map((m,i)=>`<div class="bar-col"><div class="val">₹${(revByMonth[i]/1000).toFixed(1)}k</div><div class="bar" style="height:${revByMonth[i]/maxRev*100}%; background:var(--aqua)"></div><div class="lbl">${new Date(m+'-01').toLocaleDateString('en-IN',{month:'short'})}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-head"><h2>Service status distribution</h2></div>
+      <div class="panel-body">
+        <div class="donut-wrap">
+          <div class="donut" style="background:conic-gradient(${donutStops.join(',')})"></div>
+          <div class="legend">${Object.entries(statusCounts).map(([k,v])=>`<div class="li"><span class="dot" style="background:${statusColors[k]||'#999'}"></span>${k} — ${v}</div>`).join('')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>AMC expiry trend (next 6 months)</h2></div>
+      <div class="panel-body">
+        <div class="bars">
+        ${(()=>{ const m2=[]; for(let i=0;i<6;i++){ const d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+i); m2.push(d.toISOString().slice(0,7)); }
+          const c2 = m2.map(m=>DB.amcs.filter(a=>a.status!=='Cancelled' && a.endDate.slice(0,7)===m).length);
+          const mx=Math.max(1,...c2);
+          return m2.map((m,i)=>`<div class="bar-col"><div class="val">${c2[i]}</div><div class="bar" style="height:${c2[i]/mx*100}%; background:var(--amber)"></div><div class="lbl">${new Date(m+'-01').toLocaleDateString('en-IN',{month:'short'})}</div></div>`).join(''); })()}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Technician performance (completed jobs)</h2></div>
+    <div class="panel-body">
+      <div class="table-wrap"><table><thead><tr><th>Technician</th><th>Assigned</th><th>Completed</th><th>Overdue in queue</th></tr></thead><tbody>
+        ${DB.technicians.map(t=>{ const mine=svc.filter(s=>s.technicianId===t.id); const comp=mine.filter(s=>s.status==='Completed').length; const ov=mine.filter(isOverdue).length;
+          return `<tr><td><strong>${t.name}</strong></td><td>${mine.length}</td><td>${comp}</td><td>${ov?`<span class="badge b-red">${ov}</span>`:'0'}</td></tr>`; }).join('')}
+      </tbody></table></div>
+    </div>
+  </div>
+  <div class="panel-head" style="border:none;padding:0 0 10px"><h2 style="font-size:16px">Quick actions</h2></div>
+  <div class="search-row" style="margin-bottom:20px">
+    <button class="btn primary" data-action="add-customer">${ic('plus')} Add Customer</button>
+    <button class="btn primary" data-action="add-ro">${ic('plus')} Add RO</button>
+    <button class="btn primary" data-action="add-service">${ic('plus')} Create Service</button>
+    <button class="btn primary" data-action="add-amc">${ic('plus')} Create AMC</button>
+    <button class="btn" data-action="nav" data-view="technicians">${ic('tech')} Assign Technician</button>
+  </div>`;
+}
+
+/* ---------------- CUSTOMERS ---------------- */
+function viewCustomers(){
+  const q = STATE.filters.customers.toLowerCase();
+  const rows = DB.customers.filter(c=> !q || [c.name,c.mobile,c.code,c.city,c.area].join(' ').toLowerCase().includes(q));
+  return `
+  <div class="panel">
+    <div class="panel-head">
+      <h2>All customers (${DB.customers.length})</h2>
+      <button class="btn primary" data-action="add-customer">${ic('plus')} Add Customer</button>
+    </div>
+    <div class="panel-body">
+      <div class="search-row" style="margin-bottom:14px">
+        <div class="search-input"><input placeholder="Search name, mobile, city, customer ID…" value="${escAttr(STATE.filters.customers)}" oninput="STATE.filters.customers=this.value; renderPartial('admin-content', adminViewHTML)"></div>
+      </div>
+      ${rows.length? `<div class="table-wrap"><table><thead><tr><th>Customer ID</th><th>Name</th><th>Mobile</th><th>Type</th><th>City / Area</th><th>Status</th><th></th></tr></thead><tbody>
+        ${rows.map(c=>`<tr class="row-link" data-action="view-customer" data-id="${c.id}">
+          <td class="mono muted">${c.code}</td><td><strong>${c.name}</strong></td><td>${c.mobile}</td><td>${c.type}</td><td>${c.area||''}${c.area?', ':''}${c.city}</td>
+          <td><span class="badge ${c.status==='Active'?'b-green':'b-slate'}">${c.status}</span></td>
+          <td><div class="search-row" style="gap:4px"><button class="icon-btn" data-action="edit-customer" data-id="${c.id}">${ic('edit')}</button><button class="icon-btn" data-action="delete-customer" data-id="${c.id}">${ic('trash')}</button></div></td>
+        </tr>`).join('')}
+      </tbody></table></div>` : emptyState('users','No customers yet','Add your first customer to get started.')}
+    </div>
+  </div>`;
+}
+function viewCustomerProfile(id){
+  const c = custObj(id); if(!c) { STATE.activeCustomerId=null; return viewCustomers(); }
+  const ros = DB.roMachines.filter(r=>r.customerId===id);
+  const amcs = DB.amcs.filter(a=>a.customerId===id);
+  const services = DB.services.filter(s=>s.customerId===id).sort((a,b)=>(b.scheduledDate||b.requestDate||'').localeCompare(a.scheduledDate||a.requestDate||''));
+  const paid = services.filter(s=>s.paymentStatus==='Paid').reduce((a,s)=>a+Number(s.totalAmount||0),0);
+  const pending = services.filter(s=>s.paymentStatus==='Pending' && s.status==='Completed').reduce((a,s)=>a+Number(s.totalAmount||0),0);
+  return `
+  <button class="btn ghost sm" data-action="back-customers" style="margin-bottom:12px">${ic('chevL')} Back to customers</button>
+  <div class="panel">
+    <div class="panel-head">
+      <h2>${c.name} <span class="muted mono" style="font-weight:600;font-size:12px">${c.code}</span></h2>
+      <div class="search-row"><button class="btn sm" data-action="edit-customer" data-id="${c.id}">${ic('edit')} Edit</button><button class="btn sm" data-action="toggle-customer-status" data-id="${c.id}">${ic(c.status==='Active'?'x':'check')} ${c.status==='Active'?'Mark inactive':'Mark active'}</button><button class="btn sm primary" data-action="add-ro" data-cust="${c.id}">${ic('plus')} Add RO</button></div>
+    </div>
+    <div class="panel-body">
+      <div class="grid2">
+        <dl class="kv">
+          <dt>Mobile</dt><dd>${c.mobile}${c.altMobile?' / '+c.altMobile:''}</dd>
+          <dt>Email</dt><dd>${c.email||'—'}</dd>
+          <dt>Type</dt><dd>${c.type}</dd>
+          <dt>Address</dt><dd>${c.address}, ${c.area?c.area+', ':''}${c.city}, ${c.state} ${c.pincode}</dd>
+          <dt>Status</dt><dd><span class="badge ${c.status==='Active'?'b-green':'b-slate'}">${c.status}</span></dd>
+          <dt>Customer since</dt><dd>${fmtDate(c.createdAt)}</dd>
+          <dt>Water / RO type</dt><dd>${c.waterRoType||'—'}</dd>
+          <dt>Installation date</dt><dd>${fmtDate(c.installDate)}</dd>
+          <dt>Installed by</dt><dd>${c.installBy||'—'}</dd>
+          <dt>AMC due date</dt><dd>${fmtDate(c.dueAmcDate)}</dd>
+        </dl>
+        <dl class="kv">
+          <dt>RO machines</dt><dd>${ros.length}</dd>
+          <dt>AMC contracts</dt><dd>${amcs.length}</dd>
+          <dt>Total services</dt><dd>${services.length}</dd>
+          <dt>Revenue paid</dt><dd>${money(paid)}</dd>
+          <dt>Payments pending</dt><dd>${pending?`<span style="color:var(--amber)">${money(pending)}</span>`:'₹0'}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="section-title">RO Machines</div>
+  ${ros.length? `<div class="table-wrap panel"><table><thead><tr><th>Model</th><th>Serial</th><th>Type</th><th>Next Service</th><th>Status</th><th></th></tr></thead><tbody>
+    ${ros.map(r=>`<tr><td><strong>${r.model}</strong><div class="muted" style="font-size:11.5px">${r.brand}</div></td><td class="mono">${r.serial}</td><td>${r.purificationType}</td><td>${fmtDate(r.nextServiceDate)}</td><td>${roStatusBadge(r)}</td>
+    <td><div class="search-row" style="gap:4px"><button class="icon-btn" data-action="edit-ro" data-id="${r.id}">${ic('edit')}</button></div></td></tr>`).join('')}
+  </tbody></table></div>` : emptyState('ro','No RO machines','Add an RO machine for this customer.')}
+  <div class="section-title">AMC contracts</div>
+  ${amcs.length? `<div class="table-wrap panel"><table><thead><tr><th>Plan</th><th>Period</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+    ${amcs.map(a=>`<tr><td>${a.plan}</td><td>${fmtDate(a.startDate)} – ${fmtDate(a.endDate)}</td><td>${money(a.amount)}</td><td>${amcBadge(a)}</td></tr>`).join('')}
+  </tbody></table></div>` : emptyState('shield','No AMC contracts','Create an AMC contract for this customer.')}
+  <div class="section-title">Service history</div>
+  ${services.length? `<div class="timeline panel" style="padding:16px 16px 16px 26px">
+    ${services.map(s=>`<div class="tl-item"><div class="tl-title">${s.type} — ${custName(s.customerId)===c.name?roObj(s.roId)?.model||'':''} ${serviceBadge(s)}</div><div class="tl-date">${fmtDate(s.scheduledDate||s.requestDate)} · ${s.totalAmount?money(s.totalAmount):''} ${s.technicianId?'· '+techName(s.technicianId):''}</div></div>`).join('')}
+  </div>` : emptyState('history','No service history yet','')}`;
+}
+
+/* ---------------- RO MACHINES ---------------- */
+function viewRO(){
+  const q = STATE.filters.ro.toLowerCase();
+  const rows = DB.roMachines.filter(r=> !q || [r.model,r.serial,r.brand,custName(r.customerId)].join(' ').toLowerCase().includes(q));
+  return `
+  <div class="panel">
+    <div class="panel-head"><h2>RO Machines (${DB.roMachines.length})</h2><button class="btn primary" data-action="add-ro">${ic('plus')} Add RO Machine</button></div>
+    <div class="panel-body">
+      <div class="search-row" style="margin-bottom:14px"><div class="search-input"><input placeholder="Search model, serial, customer…" value="${escAttr(STATE.filters.ro)}" oninput="STATE.filters.ro=this.value; renderPartial('admin-content', adminViewHTML)"></div></div>
+      ${rows.length? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Model / Serial</th><th>Type</th><th>Freq</th><th>Last Service</th><th>Next Service</th><th>Status</th><th></th></tr></thead><tbody>
+      ${rows.map(r=>{ const overdue = r.nextServiceDate && daysDiff(r.nextServiceDate)<0;
+        return `<tr>
+        <td><a href="#" data-action="view-customer" data-id="${r.customerId}" style="text-decoration:underline">${custName(r.customerId)}</a></td>
+        <td><strong>${r.model}</strong><div class="muted mono" style="font-size:11.5px">${r.serial}</div></td>
+        <td>${r.purificationType}</td><td>${freqLabel(r.serviceFrequency)}</td>
+        <td>${fmtDate(r.lastServiceDate)}</td>
+        <td>${fmtDate(r.nextServiceDate)} ${overdue?'<span class="badge b-red">Overdue</span>':''}</td>
+        <td>${roStatusBadge(r)}</td>
+        <td><div class="search-row" style="gap:4px"><button class="icon-btn" data-action="edit-ro" data-id="${r.id}">${ic('edit')}</button><button class="icon-btn" data-action="delete-ro" data-id="${r.id}">${ic('trash')}</button></div></td>
+        </tr>`; }).join('')}
+      </tbody></table></div>` : emptyState('ro','No RO machines yet','Add the first RO machine to start tracking service dates.')}
+    </div>
+  </div>`;
+}
+
+/* ---------------- AMC ---------------- */
+function viewAMC(){
+  const q = STATE.filters.amc.toLowerCase();
+  const rows = DB.amcs.filter(a=> !q || [a.plan,custName(a.customerId)].join(' ').toLowerCase().includes(q));
+  return `
+  <div class="panel">
+    <div class="panel-head"><h2>AMC Contracts (${DB.amcs.length})</h2><button class="btn primary" data-action="add-amc">${ic('plus')} Create AMC</button></div>
+    <div class="panel-body">
+      <div class="search-row" style="margin-bottom:14px"><div class="search-input"><input placeholder="Search plan or customer…" value="${escAttr(STATE.filters.amc)}" oninput="STATE.filters.amc=this.value; renderPartial('admin-content', adminViewHTML)"></div></div>
+      ${rows.length? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>RO</th><th>Plan</th><th>Period</th><th>Amount</th><th>Services used</th><th>Payment</th><th>Status</th><th></th></tr></thead><tbody>
+      ${rows.map(a=>`<tr>
+        <td><a href="#" data-action="view-customer" data-id="${a.customerId}" style="text-decoration:underline">${custName(a.customerId)}</a></td>
+        <td>${roObj(a.roId)?.model||'—'}</td><td>${a.plan}</td><td>${fmtDate(a.startDate)} – ${fmtDate(a.endDate)}</td><td>${money(a.amount)}</td>
+        <td>${a.servicesUsed}/${a.servicesIncluded}</td>
+        <td><span class="badge ${a.paymentStatus==='Paid'?'b-green':'b-amber'}">${a.paymentStatus}</span></td>
+        <td>${amcBadge(a)}</td>
+        <td><div class="search-row" style="gap:4px"><button class="icon-btn" data-action="edit-amc" data-id="${a.id}">${ic('edit')}</button><button class="icon-btn" data-action="delete-amc" data-id="${a.id}">${ic('trash')}</button></div></td>
+      </tr>`).join('')}
+      </tbody></table></div>` : emptyState('shield','No AMC contracts yet','Create an AMC contract linked to a customer RO machine.')}
+    </div>
+  </div>`;
+}
+
+/* ---------------- SERVICES ---------------- */
+function viewServices(requestsOnly){
+  const q = STATE.filters.services.toLowerCase();
+  let rows = DB.services.filter(s=> !q || [custName(s.customerId),s.type,s.complaint].join(' ').toLowerCase().includes(q));
+  if(requestsOnly) rows = rows.filter(s=>['New','Pending'].includes(s.status));
+  if(STATE.filters.servicesStatus) rows = rows.filter(s=>s.status===STATE.filters.servicesStatus);
+  rows = rows.slice().sort((a,b)=> (a.dueDate||a.requestDate||'').localeCompare(b.dueDate||b.requestDate||''));
+  const statusOpts = ['New','Pending','Scheduled','Assigned','On the Way','In Progress','Waiting for Parts','Completed','Cancelled','Rescheduled','Customer Not Available'];
+  return `
+  <div class="panel">
+    <div class="panel-head"><h2>${requestsOnly?'Service Requests':'All Services'} (${rows.length})</h2><button class="btn primary" data-action="add-service">${ic('plus')} ${requestsOnly?'New Request':'Create Service'}</button></div>
+    <div class="panel-body">
+      <div class="search-row" style="margin-bottom:14px">
+        <div class="search-input"><input placeholder="Search customer, type, complaint…" value="${escAttr(STATE.filters.services)}" oninput="STATE.filters.services=this.value; renderPartial('admin-content', adminViewHTML)"></div>
+        ${requestsOnly?'':`<select onchange="STATE.filters.servicesStatus=this.value; renderPartial('admin-content', adminViewHTML)" style="width:auto"><option value="">All statuses</option>${statusOpts.map(s=>`<option ${STATE.filters.servicesStatus===s?'selected':''}>${s}</option>`).join('')}</select>`}
+      </div>
+      ${rows.length? `<div class="table-wrap"><table><thead><tr><th>Customer</th><th>Type</th><th>Due</th><th>Technician</th><th>Priority</th><th>Status</th><th>Amount</th><th></th></tr></thead><tbody>
+      ${rows.map(s=>`<tr class="row-link" data-action="view-service" data-id="${s.id}">
+        <td><strong>${custName(s.customerId)}</strong><div class="muted" style="font-size:11.5px">${roObj(s.roId)?.model||''}</div></td>
+        <td>${s.type}</td><td>${fmtDate(s.dueDate||s.scheduledDate)}</td><td>${techName(s.technicianId)}</td>
+        <td><span class="badge ${s.priority==='High'?'b-red':'b-slate'}">${s.priority}</span></td>
+        <td>${serviceBadge(s)}</td><td>${s.totalAmount?money(s.totalAmount):'—'}</td>
+        <td><div class="search-row" style="gap:4px"><button class="icon-btn" data-action="edit-service" data-id="${s.id}">${ic('edit')}</button><button class="icon-btn" data-action="delete-service" data-id="${s.id}">${ic('trash')}</button></div></td>
+      </tr>`).join('')}
+      </tbody></table></div>` : emptyState('wrench','Nothing here','Create a service to get started.')}
+    </div>
+  </div>`;
+}
+function viewServiceDetail(id, mode){
+  const s = byId(DB.services,id); if(!s){ STATE.activeServiceId=null; return viewServices(false); }
+  const c = custObj(s.customerId); const ro = roObj(s.roId);
+  const backAction = mode==='admin' ? `data-action="back-services"` : `data-action="tech-back"`;
+  return `
+  <button class="btn ghost sm" ${backAction} style="margin-bottom:12px">${ic('chevL')} Back</button>
+  <div class="panel">
+    <div class="panel-head">
+      <h2>${s.type} — ${c?c.name:'—'}</h2>
+      ${serviceBadge(s)}
+    </div>
+    <div class="panel-body">
+      <div class="grid2">
+        <dl class="kv">
+          <dt>Customer</dt><dd>${c?c.name:'—'} (${c?c.mobile:''})</dd>
+          <dt>Address</dt><dd>${c?`${c.address}, ${c.area?c.area+', ':''}${c.city}`:'—'}</dd>
+          <dt>RO Machine</dt><dd>${ro?`${ro.model} — ${ro.serial}`:'—'}</dd>
+          <dt>Complaint</dt><dd>${s.complaint||'—'}</dd>
+          <dt>Priority</dt><dd>${s.priority}</dd>
+        </dl>
+        <dl class="kv">
+          <dt>Technician</dt><dd>${techName(s.technicianId)}</dd>
+          <dt>Requested</dt><dd>${fmtDate(s.requestDate)}</dd>
+          <dt>Scheduled</dt><dd>${fmtDate(s.scheduledDate)}</dd>
+          <dt>Due</dt><dd>${fmtDate(s.dueDate)}</dd>
+          <dt>Remarks</dt><dd>${s.remarks||'—'}</dd>
+        </dl>
+      </div>
+      ${s.status==='Completed' ? `
+      <div class="section-title">Completion details</div>
+      <dl class="kv">
+        <dt>Completed</dt><dd>${fmtDateTime(s.completedAt)}</dd>
+        <dt>Work performed</dt><dd>${s.workPerformed||'—'}</dd>
+        <dt>Parts used</dt><dd>${(s.partsUsed||[]).map(p=>`${p.name} ×${p.qty} (${money(p.cost)})`).join(', ')||'—'}</dd>
+        <dt>Labour cost</dt><dd>${money(s.laborCost)}</dd>
+        <dt>Parts cost</dt><dd>${money(s.partsCost)}</dd>
+        <dt>Additional charges</dt><dd>${money(s.additionalCharges)}</dd>
+        <dt>Discount</dt><dd>${money(s.discount)}</dd>
+        <dt>Total amount</dt><dd><strong>${money(s.totalAmount)}</strong></dd>
+        <dt>Payment</dt><dd>${s.paymentStatus} ${s.paymentMode?'via '+s.paymentMode:''}</dd>
+        <dt>Signature</dt><dd>${s.signature||'—'}</dd>
+      </dl>
+      ${s.beforePhoto||s.afterPhoto?`<div class="grid2" style="margin-top:12px">
+        ${s.beforePhoto?`<div><div class="muted" style="font-size:11.5px;margin-bottom:5px">Before</div><img class="photo-thumb" src="${s.beforePhoto}"></div>`:''}
+        ${s.afterPhoto?`<div><div class="muted" style="font-size:11.5px;margin-bottom:5px">After</div><img class="photo-thumb" src="${s.afterPhoto}"></div>`:''}
+      </div>`:''}
+      ` : ''}
+      ${mode==='admin' ? `<div class="search-row" style="margin-top:18px">
+        <button class="btn" data-action="edit-service" data-id="${s.id}">${ic('edit')} Edit</button>
+        ${!s.technicianId ? `<button class="btn primary" data-action="assign-tech" data-id="${s.id}">${ic('tech')} Assign Technician</button>`:''}
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
+/* ---------------- TECHNICIANS ---------------- */
+function viewTechnicians(){
+  return `
+  <div class="panel">
+    <div class="panel-head"><h2>Technicians (${DB.technicians.length})</h2><button class="btn primary" data-action="add-tech">${ic('plus')} Add Technician</button></div>
+    <div class="panel-body">
+      ${DB.technicians.length? `<div class="table-wrap"><table><thead><tr><th>Name</th><th>Mobile</th><th>Today</th><th>Pending</th><th>Completed</th><th>Overdue</th><th>Status</th><th></th></tr></thead><tbody>
+      ${DB.technicians.map(t=>{ const mine=DB.services.filter(s=>s.technicianId===t.id);
+        const today=mine.filter(isDueToday).length; const pending=mine.filter(s=>!['Completed','Cancelled'].includes(s.status)).length;
+        const comp=mine.filter(s=>s.status==='Completed').length; const ov=mine.filter(isOverdue).length;
+        return `<tr><td><strong>${t.name}</strong><div class="muted" style="font-size:11.5px">${t.email||''}</div></td><td>${t.mobile}</td>
+        <td>${today}</td><td>${pending}</td><td>${comp}</td><td>${ov?`<span class="badge b-red">${ov}</span>`:'0'}</td>
+        <td><span class="badge ${t.status==='Active'?'b-green':'b-slate'}">${t.status}</span></td>
+        <td><div class="search-row" style="gap:4px"><button class="icon-btn" data-action="edit-tech" data-id="${t.id}">${ic('edit')}</button><button class="icon-btn" data-action="delete-tech" data-id="${t.id}">${ic('trash')}</button></div></td>
+        </tr>`; }).join('')}
+      </tbody></table></div>` : emptyState('tech','No technicians yet','Add a technician so you can assign services.')}
+    </div>
+  </div>
+  <div class="section-title">Unassigned services</div>
+  ${(()=>{ const un = DB.services.filter(s=>!s.technicianId && !['Completed','Cancelled'].includes(s.status));
+    return un.length ? `<div class="table-wrap panel"><table><thead><tr><th>Customer</th><th>Type</th><th>Due</th><th>Priority</th><th></th></tr></thead><tbody>
+    ${un.map(s=>`<tr><td>${custName(s.customerId)}</td><td>${s.type}</td><td>${fmtDate(s.dueDate)}</td><td><span class="badge ${s.priority==='High'?'b-red':'b-slate'}">${s.priority}</span></td>
+    <td><button class="btn sm primary" data-action="assign-tech" data-id="${s.id}">${ic('tech')} Assign</button></td></tr>`).join('')}
+    </tbody></table></div>` : emptyState('check','All caught up','No unassigned services right now.'); })()}`;
+}
+
+/* ---------------- CALENDAR ---------------- */
+function viewCalendar(){
+  const y = STATE.calYear, m = STATE.calMonth;
+  const first = new Date(y,m,1); const startDow = first.getDay();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+  const cells = [];
+  for(let i=0;i<startDow;i++) cells.push(null);
+  for(let d=1; d<=daysInMonth; d++) cells.push(d);
+  while(cells.length % 7 !==0) cells.push(null);
+
+  function eventsFor(dateISO){
+    const evs=[];
+    DB.services.forEach(s=>{ if(s.dueDate===dateISO && !['Completed','Cancelled'].includes(s.status)) evs.push({label:'🔧 '+custName(s.customerId), cls:isOverdue(s)?'b-red':'b-teal'}); });
+    DB.services.forEach(s=>{ if(s.status==='Completed' && s.completedAt && s.completedAt.slice(0,10)===dateISO) evs.push({label:'✅ '+custName(s.customerId), cls:'b-green'}); });
+    DB.amcs.forEach(a=>{ if(a.endDate===dateISO && a.status!=='Cancelled') evs.push({label:'📅 AMC: '+custName(a.customerId), cls:'b-amber'}); });
+    DB.roMachines.forEach(r=>{ if(r.installDate===dateISO) evs.push({label:'🏠 Install: '+custName(r.customerId), cls:'b-slate'}); });
+    return evs;
+  }
+  const monthLabel = first.toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+  const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const todayStr = todayISO();
+
+  const selDate = STATE.calSelected;
+  const selEvents = selDate ? eventsFor(selDate) : [];
+
+  return `
+  <div class="panel">
+    <div class="panel-head">
+      <h2>${monthLabel}</h2>
+      <div class="search-row"><button class="icon-btn" data-action="cal-prev">${ic('chevL')}</button><button class="btn sm" data-action="cal-today">Today</button><button class="icon-btn" data-action="cal-next">${ic('chevR')}</button></div>
+    </div>
+    <div class="panel-body">
+      <div class="cal-grid">
+        ${dows.map(d=>`<div class="cal-dow">${d}</div>`).join('')}
+        ${cells.map(d=>{
+          if(d===null) return `<div class="cal-cell other-month"></div>`;
+          const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          const evs = eventsFor(iso);
+          return `<div class="cal-cell ${iso===todayStr?'today':''}" data-action="cal-day" data-date="${iso}">
+            <div class="dnum">${d}</div>
+            ${evs.slice(0,3).map(e=>`<span class="cal-dot badge ${e.cls}">${e.label}</span>`).join('')}
+            ${evs.length>3?`<div class="muted" style="font-size:10px">+${evs.length-3} more</div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>
+  ${selDate ? `<div class="panel"><div class="panel-head"><h2>${fmtDate(selDate)}</h2></div><div class="panel-body">
+    ${selEvents.length? selEvents.map(e=>`<div class="svc-card" style="margin-bottom:8px"><span class="badge ${e.cls}">${e.label}</span></div>`).join('') : `<div class="muted">No events on this day.</div>`}
+  </div></div>` : ''}
+  <div class="muted" style="font-size:12px">🔧 Service due &nbsp; ✅ Completed &nbsp; 📅 AMC expiry &nbsp; 🏠 Installation</div>`;
+}
+
+/* ---------------- NOTIFICATIONS ---------------- */
+function viewNotifications(){
+  const all = buildNotifications();
+  const unread = all.filter(n=>!n.read);
+  const read = all.filter(n=>n.read);
+  const filter = STATE.notifFilter;
+  const notifs = filter==='unread' ? unread : filter==='read' ? read : all;
+  const sevMap = {danger:'b-red', amber:'b-amber', teal:'b-teal'};
+  return `
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Notification Center</h2>
+      <button class="btn sm" data-action="mark-all-read" ${unread.length?'':'disabled'}>${ic('check')} Mark all as read</button>
+    </div>
+    <div class="panel-body" style="padding-bottom:0">
+      <div class="notif-tabs">
+        <button class="${filter==='all'?'active':''}" data-action="notif-filter" data-filter="all">All (${all.length})</button>
+        <button class="${filter==='unread'?'active':''}" data-action="notif-filter" data-filter="unread">Unread (${unread.length})</button>
+        <button class="${filter==='read'?'active':''}" data-action="notif-filter" data-filter="read">Read (${read.length})</button>
+      </div>
+    </div>
+    <div class="panel-body pad0" style="margin-top:12px">
+      ${notifs.length? `<div>${notifs.map(n=>`<div class="notif-row ${n.read?'':'unread'}" data-action="notif-toggle-read" data-id="${n.id}">
+        <div class="unread-dot ${n.read?'hide':''}"></div>
+        <div class="icon-btn" style="cursor:default; color:var(--${n.sev==='danger'?'red':n.sev==='amber'?'amber':'teal'})">${ic(n.icon)}</div>
+        <div style="flex:1">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap"><strong style="font-size:13.5px">${n.title}</strong><span class="badge ${sevMap[n.sev]}">${n.kind}</span></div>
+          <div class="muted" style="font-size:12.5px; margin-top:2px">${n.msg}</div>
+        </div>
+        <div class="muted" style="font-size:11.5px; white-space:nowrap">${fmtDate(n.date)}</div>
+        <button class="icon-btn notif-close" data-action="notif-close" data-id="${n.id}" title="Close notification" aria-label="Close notification">${ic('x')}</button>
+      </div>`).join('')}</div>` : emptyState('bell', filter==='unread'?'Nothing unread':filter==='read'?'Nothing read yet':'All clear', filter==='all'?'No pending reminders right now.':'')}
+    </div>
+  </div>
+  <div class="muted" style="font-size:12px">Reminders trigger automatically based on your Settings thresholds for service due dates and AMC expiry. Tap a notification to mark it read or unread.</div>`;
+}
+
+/* ---------------- REPORTS ---------------- */
+function viewReports(){
+  const groups = [
+    {title:'Customer Reports', items:[
+      ['Customer Master', DB.customers],
+      ['New Customers (30d)', DB.customers.filter(c=>daysDiff(c.createdAt)>=-30)],
+      ['Active Customers', DB.customers.filter(c=>c.status==='Active')],
+      ['Inactive Customers', DB.customers.filter(c=>c.status==='Inactive')],
+    ]},
+    {title:'Service Reports', items:[
+      ['Daily Service Report', DB.services.filter(s=>s.scheduledDate===todayISO())],
+      ['Pending Services', DB.services.filter(s=>!['Completed','Cancelled'].includes(s.status))],
+      ['Completed Services', DB.services.filter(s=>s.status==='Completed')],
+      ['Overdue Services', DB.services.filter(isOverdue)],
+    ]},
+    {title:'AMC Reports', items:[
+      ['Active AMC', DB.amcs.filter(a=>amcStatus(a)==='Active')],
+      ['Expiring AMC', DB.amcs.filter(a=>amcStatus(a)==='Expiring Soon')],
+      ['Expired AMC', DB.amcs.filter(a=>amcStatus(a)==='Expired')],
+    ]},
+    {title:'Financial Reports', items:[
+      ['Service Revenue (paid)', DB.services.filter(s=>s.paymentStatus==='Paid')],
+      ['Pending Payments', DB.services.filter(s=>s.paymentStatus==='Pending' && s.status==='Completed')],
+    ]},
+  ];
+  window.__reportData = window.__reportData || {};
+  groups.forEach(g=>g.items.forEach(([name,data])=>{ window.__reportData[name]=data; }));
+  return groups.map(g=>`
+    <div class="panel">
+      <div class="panel-head"><h2>${g.title}</h2></div>
+      <div class="panel-body">
+        <div class="cards-row">
+          ${g.items.map(([name,data])=>`<div class="stat-card">
+            <div class="label">${name}</div>
+            <div class="value">${data.length}</div>
+            <button class="btn sm" style="margin-top:8px" data-action="export-csv" data-report="${escAttr(name)}">${ic('download')} Export CSV</button>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------------- SETTINGS ---------------- */
+function viewSettings(){
+  const s = DB.settings;
+  const permStatus = (typeof Notification!=='undefined' && Notification.permission) || 'unsupported';
+  return `
+  <div class="panel">
+    <div class="panel-head"><h2>Push reminders</h2></div>
+    <div class="panel-body">
+      <p class="muted" style="margin-top:0">When a service is due today, AquaFlow can pop up a reminder as soon as you open the app — like a push notification.</p>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:12px"><input type="checkbox" id="push-enabled-toggle" style="width:auto" ${s.pushEnabled?'checked':''} onchange="togglePushEnabled(this.checked)"> Show due-today reminders when I open the app</label>
+      <div class="search-row">
+        <button class="btn" data-action="enable-push">${ic('bell')} Enable browser notifications</button>
+        <span class="muted" style="font-size:12px">Status: ${permStatus==='granted'?'<span style="color:var(--green);font-weight:700">Allowed</span>':permStatus==='denied'?'<span style="color:var(--red);font-weight:700">Blocked</span>':permStatus==='unsupported'?'Not supported in this preview':'Not yet requested'}</span>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Notification settings</h2></div>
+    <div class="panel-body">
+      <form data-action="submit-settings">
+        <div class="field"><label>Company name</label><input name="companyName" value="${escAttr(s.companyName)}"></div>
+        <div class="field"><label>Service reminder — days before due date (comma-separated)</label><input name="serviceReminderDays" value="${s.serviceReminderDays.join(', ')}"></div>
+        <div class="field"><label>AMC reminder — days before expiry (comma-separated)</label><input name="amcReminderDays" value="${s.amcReminderDays.join(', ')}"></div>
+        <div class="field"><label>Notification channels</label>
+          <div class="search-row">
+            <label style="display:flex;align-items:center;gap:6px;font-weight:600"><input type="checkbox" checked style="width:auto"> In-app</label>
+            <label style="display:flex;align-items:center;gap:6px;font-weight:600"><input type="checkbox" style="width:auto"> Email</label>
+            <label style="display:flex;align-items:center;gap:6px;font-weight:600"><input type="checkbox" style="width:auto"> WhatsApp</label>
+            <label style="display:flex;align-items:center;gap:6px;font-weight:600"><input type="checkbox" style="width:auto"> SMS</label>
+          </div>
+          <div class="muted" style="font-size:12px;margin-top:4px">Email / WhatsApp / SMS need a provider connected later — this screen just records your preference for now.</div>
+        </div>
+        <button class="btn primary" type="submit">${ic('check')} Save settings</button>
+      </form>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h2>Data</h2></div>
+    <div class="panel-body">
+      <p class="muted" style="margin-top:0">This demo stores all data in your browser only (nothing leaves your device). Use the buttons below to back up or reset your working data.</p>
+      <div class="search-row">
+        <button class="btn" data-action="export-json">${ic('download')} Export full backup (JSON)</button>
+        <button class="btn danger" data-action="reset-data">${ic('trash')} Reset to sample data</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- EMPTY STATE ---------------- */
+function emptyState(icon,title,sub){
+  return `<div class="empty"><div class="big-icon">${ICONS[icon]||''}</div><div style="font-weight:700;color:var(--ink)">${title}</div><div style="font-size:12.5px;margin-top:4px">${sub}</div></div>`;
+}
+function escAttr(s){ return String(s==null?'':s).replace(/"/g,'&quot;'); }
+
+/* ============================= MODALS (forms) ============================= */
+function openModal(html){ STATE.modal = html; renderModal(); }
+function closeModal(){ STATE.modal = null; renderModal(); }
+function renderModal(){
+  const root = document.getElementById('modal-root') || document.getElementById('tech-modal-root');
+  if(!root) return;
+  root.innerHTML = STATE.modal ? `<div class="modal-backdrop" data-action="close-modal-backdrop" role="presentation">${STATE.modal}</div>` : '';
+}
+function fld(label, name, value, type, opts){
+  type = type||'text'; opts = opts||{};
+  if(type==='select'){
+    return `<div class="field"><label>${label}</label><select name="${name}" ${opts.required?'required':''}>${opts.options.map(o=>{
+      const val = typeof o==='object'?o.value:o; const lab = typeof o==='object'?o.label:o;
+      return `<option value="${escAttr(val)}" ${String(value)===String(val)?'selected':''}>${lab}</option>`;
+    }).join('')}</select></div>`;
+  }
+  if(type==='textarea'){
+    return `<div class="field"><label>${label}</label><textarea name="${name}" rows="${opts.rows||3}" ${opts.required?'required':''}>${value||''}</textarea></div>`;
+  }
+  return `<div class="field"><label>${label}</label><input name="${name}" type="${type}" value="${escAttr(value)}" ${opts.required?'required':''} ${opts.step?`step="${opts.step}"`:''}></div>`;
+}
+function modalShell(title, bodyHTML, submitLabel, formAction){
+  return `<div class="modal" role="dialog" aria-modal="true" aria-label="AquaFlow dialog">
+    <div class="modal-head"><h3>${title}</h3><button type="button" class="icon-btn modal-close-btn" data-action="close-modal" title="Close" aria-label="Close dialog">${ic('x')}</button></div>
+    <form data-action="${formAction}">
+      <div class="modal-body">${bodyHTML}</div>
+      <div class="modal-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button type="submit" class="btn primary">${ic('check')} ${submitLabel}</button></div>
+    </form>
+  </div>`;
+}
+
+function customerForm(id){
+  const c = id ? byId(DB.customers,id) : {code:'CUS-'+(1000+DB.customers.length+1), name:'', mobile:'', altMobile:'', email:'', type:'Residential', address:'', area:'', city:'', state:'', pincode:'', status:'Active', createdAt: todayISO()};
+  const types = ['Residential','Commercial','Office','Society','Hospital','School','Restaurant','Other'];
+  const body = `
+    <input type="hidden" name="id" value="${id||''}">
+    <div class="field-row">${fld('Customer name','name',c.name,'text',{required:true})}${fld('Mobile number','mobile',c.mobile,'tel',{required:true})}</div>
+    <div class="field-row">${fld('Alternate mobile','altMobile',c.altMobile)}${fld('Email','email',c.email,'email')}</div>
+    <div class="field-row">${fld('Customer type','type',c.type,'select',{options:types})}${fld('Status','status',c.status,'select',{options:['Active','Inactive']})}</div>
+    ${fld('Address','address',c.address,'textarea',{rows:2,required:true})}
+    <div class="field-row">${fld('Area','area',c.area)}${fld('City','city',c.city,'text',{required:true})}</div>
+    <div class="field-row">${fld('State','state',c.state)}${fld('Pincode','pincode',c.pincode)}</div>
+    <div class="section-title" style="margin-top:6px">RO installation</div>
+    <div class="field-row">${fld('Water / RO type','waterRoType',c.waterRoType||'RO','select',{options:['RO','UV','UF','RO + UV','RO + UV + UF','Commercial RO','Other']})}${fld('Installation date','installDate',c.installDate,'date')}</div>
+    <div class="field-row">${fld('Installed by','installBy',c.installBy,'text')}${fld('AMC due date','dueAmcDate',c.dueAmcDate,'date')}</div>`;
+  openModal(modalShell(id?'Edit customer':'Add customer', body, id?'Save changes':'Add customer', 'submit-customer'));
+}
+function roForm(id, presetCustId){
+  const r = id ? byId(DB.roMachines,id) : {customerId:presetCustId||(DB.customers[0]?.id||''), model:'', brand:'', serial:'', purificationType:'RO', installDate:todayISO(), purchaseDate:todayISO(), warrantyEnd:'', serviceFrequency:'3m', lastServiceDate:'', nextServiceDate:'', location:'', status:'Active'};
+  const types = ['RO','UV','UF','RO + UV','RO + UV + UF','Commercial RO','Other'];
+  const body = `
+    <input type="hidden" name="id" value="${id||''}">
+    ${fld('Customer','customerId',r.customerId,'select',{options:DB.customers.map(c=>({value:c.id,label:c.name})), required:true})}
+    <div class="field-row">${fld('RO model','model',r.model,'text',{required:true})}${fld('Brand','brand',r.brand)}</div>
+    <div class="field-row">${fld('Serial number','serial',r.serial,'text',{required:true})}${fld('RO type','roType',r.roType||r.purificationType||'RO','select',{options:types})}</div>
+    <div class="field-row">${fld('Installation date','installDate',r.installDate,'date')}${fld('Purchase date','purchaseDate',r.purchaseDate,'date')}</div>
+    <div class="field-row">${fld('Price','price',r.price||0,'number',{step:'1'})}${fld('Warranty end','warrantyEnd',r.warrantyEnd,'date')}</div>${fld('RO machine details','details',r.details,'textarea',{rows:3})}<div class="field-row">${fld('Installation location','location',r.location)}${fld('Status','status',r.status,'select',{options:['Active','Under Service','Inactive','Replaced']})}</div>
+    <div class="field-row">${fld('Service frequency','serviceFrequency',r.serviceFrequency,'select',{options:[{value:'monthly',label:'Monthly'},{value:'2m',label:'Every 2 months'},{value:'3m',label:'Every 3 months'},{value:'4m',label:'Every 4 months'},{value:'6m',label:'Every 6 months'},{value:'yearly',label:'Yearly'},{value:'custom',label:'Custom'}]})}${fld('Last service date','lastServiceDate',r.lastServiceDate,'date')}</div>
+    <div class="field">${fld('Next service date (auto if blank)','nextServiceDate',r.nextServiceDate,'date')}</div>`;
+  openModal(modalShell(id?'Edit RO machine':'Add RO machine', body, id?'Save changes':'Add RO machine', 'submit-ro'));
+}
+function amcForm(id){
+  const a = id ? byId(DB.amcs,id) : {customerId:DB.customers[0]?.id||'', roId:'', plan:'', startDate:todayISO(), endDate:addMonths(todayISO(),12), amount:0, paymentStatus:'Pending', servicesIncluded:4, servicesUsed:0, status:'Active', terms:''};
+  const ros = DB.roMachines.filter(r=>r.customerId===a.customerId);
+  const body = `
+    <input type="hidden" name="id" value="${id||''}">
+    ${fld('Customer','customerId',a.customerId,'select',{options:DB.customers.map(c=>({value:c.id,label:c.name})), required:true})}
+    ${fld('RO Machine','roId',a.roId,'select',{options:[{value:'',label:'— select —'}, ...ros.map(r=>({value:r.id,label:`${r.model} (${r.serial})`}))]})}
+    <div class="field-row">${fld('AMC plan name','plan',a.plan,'text',{required:true})}${fld('Amount','amount',a.amount,'number',{step:'1'})}</div>
+    <div class="field-row">${fld('Start date','startDate',a.startDate,'date')}${fld('End date','endDate',a.endDate,'date')}</div>
+    <div class="field-row">${fld('Services included','servicesIncluded',a.servicesIncluded,'number')}${fld('Services used','servicesUsed',a.servicesUsed,'number')}</div>
+    <div class="field-row">${fld('Payment status','paymentStatus',a.paymentStatus,'select',{options:['Paid','Pending','Partial']})}${fld('Status','status',a.status,'select',{options:['Draft','Active','Cancelled']})}</div>
+    ${fld('Terms & conditions','terms',a.terms,'textarea',{rows:2})}`;
+  openModal(modalShell(id?'Edit AMC contract':'Create AMC contract', body, id?'Save changes':'Create AMC', 'submit-amc'));
+}
+function serviceForm(id){
+  const s = id ? byId(DB.services,id) : {customerId:DB.customers[0]?.id||'', roId:'', type:'Regular Service', requestDate:todayISO(), scheduledDate:todayISO(), dueDate:todayISO(), technicianId:'', priority:'Normal', status:'New', complaint:'', remarks:''};
+  const ros = DB.roMachines.filter(r=>r.customerId===s.customerId);
+  const types = ['Regular Service','AMC Service','Installation','Repair','Filter Replacement','Membrane Replacement','Breakdown','Inspection','Complaint','Other'];
+  const statuses = ['New','Pending','Scheduled','Assigned','On the Way','In Progress','Waiting for Parts','Completed','Cancelled','Rescheduled','Customer Not Available'];
+  const body = `
+    <input type="hidden" name="id" value="${id||''}">
+    ${fld('Customer','customerId',s.customerId,'select',{options:DB.customers.map(c=>({value:c.id,label:c.name})), required:true})}
+    ${fld('RO Machine','roId',s.roId,'select',{options:[{value:'',label:'— select —'}, ...ros.map(r=>({value:r.id,label:`${r.model} (${r.serial})`}))]})}
+    <div class="field-row">${fld('Service type','type',s.type,'select',{options:types})}${fld('Priority','priority',s.priority,'select',{options:['Normal','High']})}</div>
+    <div class="field-row">${fld('Request date','requestDate',s.requestDate,'date')}${fld('Scheduled date','scheduledDate',s.scheduledDate,'date')}</div>
+    <div class="field-row">${fld('Due date','dueDate',s.dueDate,'date')}${fld('Technician','technicianId',s.technicianId,'select',{options:[{value:'',label:'Unassigned'}, ...DB.technicians.map(t=>({value:t.id,label:t.name}))]})}</div>
+    ${fld('Status','status',s.status,'select',{options:statuses})}
+    ${fld('Customer complaint / notes','complaint',s.complaint,'textarea',{rows:2})}
+    ${fld('Admin remarks','remarks',s.remarks,'textarea',{rows:2})}`;
+  openModal(modalShell(id?'Edit service':'Create service', body, id?'Save changes':'Create service', 'submit-service'));
+}
+function techForm(id){
+  const t = id ? byId(DB.technicians,id) : {name:'', mobile:'', email:'', status:'Active'};
+  const body = `
+    <input type="hidden" name="id" value="${id||''}">
+    ${fld('Full name','name',t.name,'text',{required:true})}
+    <div class="field-row">${fld('Mobile','mobile',t.mobile,'tel',{required:true})}${fld('Email','email',t.email,'email')}</div>
+    ${fld('Status','status',t.status,'select',{options:['Active','Inactive']})}
+    ${id ? `<div class="af-route-note">${ic('user')} Login ID: <strong>${escAttr((DB.users||[]).find(u=>u.technicianId===id)?.username||'Not created')}</strong><button type="button" class="btn sm" data-action="change-tech-password" data-id="${id}" style="margin-left:auto">Change password</button></div>` : '<div class="muted" style="font-size:12px">A technician login will be created automatically with the first name as the login ID and a temporary password <strong>tech123</strong>.</div>'}`;
+  openModal(modalShell(id?'Edit technician':'Add technician', body, id?'Save changes':'Add technician', 'submit-tech'));
+}
+function assignForm(serviceId){
+  const s = byId(DB.services,serviceId);
+  const body = `
+    <input type="hidden" name="id" value="${serviceId}">
+    <p class="muted" style="margin-top:0">Assigning technician for <strong>${custName(s.customerId)}</strong> — ${s.type}</p>
+    ${fld('Technician','technicianId',s.technicianId,'select',{options:DB.technicians.map(t=>({value:t.id,label:t.name})), required:true})}
+    ${fld('Scheduled date','scheduledDate',s.scheduledDate||todayISO(),'date')}`;
+  openModal(modalShell('Assign technician', body, 'Assign & notify', 'submit-assign'));
+}
+
+/* ============================= CRUD HANDLERS ============================= */
+function formToObj(form){
+  const data = new FormData(form); const o={};
+  for(const [k,v] of data.entries()) o[k]=v;
+  return o;
+}
+function handleSubmitCustomer(form){
+  const o = formToObj(form);
+  if(o.id){ const c=byId(DB.customers,o.id); Object.assign(c,o); toast('Customer updated'); }
+  else { o.id=uid('cust'); o.code='CUS-'+(1000+DB.customers.length+1); o.createdAt=todayISO(); DB.customers.push(o); toast('Customer added'); }
+  persist(); closeModal(); render();
+}
+function handleSubmitRO(form){
+  const o = formToObj(form);
+  if(!o.nextServiceDate && o.lastServiceDate) o.nextServiceDate = addMonths(o.lastServiceDate, freqMonths(o.serviceFrequency));
+  if(o.id){ const r=byId(DB.roMachines,o.id); Object.assign(r,o); toast('RO machine updated'); }
+  else { o.id=uid('ro'); DB.roMachines.push(o); toast('RO machine added'); }
+  persist(); closeModal(); render();
+}
+function handleSubmitAMC(form){
+  const o = formToObj(form);
+  o.amount=Number(o.amount||0); o.servicesIncluded=Number(o.servicesIncluded||0); o.servicesUsed=Number(o.servicesUsed||0);
+  if(o.id){ const a=byId(DB.amcs,o.id); Object.assign(a,o); toast('AMC updated'); }
+  else { o.id=uid('amc'); DB.amcs.push(o); toast('AMC contract created'); }
+  persist(); closeModal(); render();
+}
+function handleSubmitService(form){
+  const o = formToObj(form);
+  const isNew=!o.id;
+  if(o.id){ const s=byId(DB.services,o.id); Object.assign(s,o); toast('Service updated'); }
+  else { o.id=uid('svc'); o.workPerformed=''; o.partsUsed=[]; o.laborCost=0; o.partsCost=0; o.additionalCharges=0; o.discount=0; o.totalAmount=0; o.paymentStatus='Pending'; o.paymentMode=''; o.beforePhoto=''; o.afterPhoto=''; o.signature=''; o.completedAt=''; DB.services.push(o); toast(o.technicianId?'Service created and assigned':'Service created'); }
+  persist(); closeModal();
+  if(isNew && o.technicianId){ STATE.adminView='technicians'; STATE.activeServiceId=null; } else { STATE.adminView='services'; STATE.activeServiceId=null; }
+  render();
+}
+function handleSubmitTech(form){
+  const o = formToObj(form);
+  if(o.id){ const t=byId(DB.technicians,o.id); Object.assign(t,o); const u=(DB.users||[]).find(x=>x.technicianId===o.id); if(u){u.name=o.name;u.status=o.status;} toast('Technician updated'); }
+  else { o.id=uid('tech'); DB.technicians.push(o); const uname=o.name.trim().split(/\s+/)[0].toLowerCase(); const unique = DB.users.some(x=>x.username===uname) ? uname+DB.technicians.length : uname; DB.users.push({id:uid('usr'),username:unique,password:'tech123',role:'technician',technicianId:o.id,name:o.name,status:o.status}); toast('Technician added with login'); }
+  persist(); closeModal(); render();
+}
+function handleSubmitAssign(form){
+  const o = formToObj(form);
+  const s = byId(DB.services,o.id);
+  s.technicianId = o.technicianId; s.scheduledDate = o.scheduledDate; if(s.status==='New'||s.status==='Pending') s.status='Assigned';
+  persist(); closeModal(); toast('Technician assigned'); render();
+}
+function handleSubmitSettings(form){
+  const o = formToObj(form);
+  DB.settings.companyName = o.companyName;
+  DB.settings.serviceReminderDays = o.serviceReminderDays.split(',').map(x=>parseInt(x.trim())).filter(n=>!isNaN(n));
+  DB.settings.amcReminderDays = o.amcReminderDays.split(',').map(x=>parseInt(x.trim())).filter(n=>!isNaN(n));
+  persist(); toast('Settings saved'); render();
+}
+function deleteEntity(kind,id){
+  if(!confirm('Remove this record? This cannot be undone.')) return;
+  const map = {customer:'customers', ro:'roMachines', amc:'amcs', service:'services', tech:'technicians'};
+  if(kind==='customer'){
+    const roIds=DB.roMachines.filter(r=>r.customerId===id).map(r=>r.id);
+    DB.services=DB.services.filter(x=>x.customerId!==id);
+    DB.amcs=DB.amcs.filter(x=>x.customerId!==id);
+    DB.roMachines=DB.roMachines.filter(x=>x.customerId!==id);
+    DB.customers=DB.customers.filter(x=>x.id!==id);
+    if(STATE.activeCustomerId===id) STATE.activeCustomerId=null;
+  } else { DB[map[kind]] = DB[map[kind]].filter(x=>x.id!==id); if(kind==='tech') DB.users=DB.users.filter(u=>u.technicianId!==id); }
+  persist(); toast('Record removed'); render();
+}
+
+/* CSV export */
+function exportCSV(name, rows){
+  if(!rows || !rows.length){ toast('Nothing to export'); return; }
+  const cols = Object.keys(rows[0]).filter(k=>typeof rows[0][k] !== 'object');
+  const lines = [cols.join(',')];
+  rows.forEach(r=>{ lines.push(cols.map(c=>`"${String(r[c]==null?'':r[c]).replace(/"/g,'""')}"`).join(',')); });
+  const blob = new Blob([lines.join('\\n')], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download = name.replace(/\\s+/g,'_')+'.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================= TECHNICIAN VIEWS ============================= */
+const TECH_TABS = [
+  {id:'today', label:'Today', icon:'wrench'},
+  {id:'history', label:'History', icon:'history'},
+  {id:'profile', label:'Profile', icon:'user'},
+];
+function techShellHTML(){
+  const t = byId(DB.technicians, currentTechId());
+  return `
+  <div class="tech-shell">
+    <div class="tech-top">
+      <div class="who-row"><div class="av">${initials(t?t.name:'T')}</div><div><div class="who">Technician</div><div class="name">${t?t.name:'Technician'}</div></div></div>
+      <div style="display:flex; gap:8px;">
+        <button class="icon-btn" style="background:rgba(255,255,255,.12); border-color:transparent; color:#fff" data-action="toggle-theme" title="Toggle theme">${ic(currentThemeIsDark()?'sun':'moon')}</button>
+        <button class="icon-btn" style="background:rgba(255,255,255,.12); border-color:transparent; color:#fff" data-action="logout" title="Sign out">${ic('logout')}</button>
+      </div>
+    </div>
+    <div class="tech-body" id="tech-content"></div>
+    <div class="tech-bottom">
+      ${TECH_TABS.map(tb=>`<button class="tb-item ${STATE.techView===tb.id?'active':''}" data-action="tech-nav" data-view="${tb.id}">${ic(tb.icon)}<span>${tb.label}</span></button>`).join('')}
+    </div>
+  </div>
+  <div id="tech-modal-root"></div>`;
+}
+function afterTechRender(){
+  document.getElementById('tech-content').innerHTML = `<div class="view-enter">${techViewHTML()}</div>`;
+  renderModal();
+}
+function currentTechId(){ return STATE.technicianId || DB.technicians[0]?.id; }
+function techViewHTML(){
+  if(STATE.activeTechServiceId) return techServiceScreen(STATE.activeTechServiceId);
+  switch(STATE.techView){
+    case 'today': return techToday();
+    case 'history': return techHistory();
+    case 'profile': return techProfile();
+    default: return '';
+  }
+}
+function techToday(){
+  const tid = currentTechId();
+  const mine = DB.services.filter(s=>s.technicianId===tid);
+  const today = mine.filter(s=>!['Completed','Cancelled'].includes(s.status) && s.dueDate===todayISO());
+  const overdue = mine.filter(isOverdue);
+  const upcoming = mine.filter(s=>!['Completed','Cancelled'].includes(s.status) && s.dueDate && daysDiff(s.dueDate)>0);
+  const pending = mine.filter(s=>!['Completed','Cancelled'].includes(s.status));
+  const completedCount = mine.filter(s=>s.status==='Completed').length;
+
+  function svcCard(s){
+    const c = custObj(s.customerId); const ro = roObj(s.roId);
+    return `<div class="svc-card">
+      <div class="top">
+        <div><div class="cust">${c?c.name:'—'}</div><div class="meta">${ro?ro.model:''} ${s.type?'· '+s.type:''}</div></div>
+        ${serviceBadge(s)}
+      </div>
+      <div class="meta">${c?c.address+', '+c.city:''}</div>
+      <div class="meta">${ic('calendar')} Due ${fmtDate(s.dueDate)} ${s.priority==='High'?' · <span style="color:var(--red);font-weight:700">High priority</span>':''}</div>
+      <div class="row">
+        <a class="btn sm" href="tel:${c?c.mobile:''}">${ic('phone')} Call</a>
+        <a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((c?c.address+' '+c.city:''))}">${ic('pin')} Navigate</a>
+        <button class="btn sm primary" data-action="tech-open" data-id="${s.id}">Open</button>
+      </div>
+    </div>`;
+  }
+  function section(title, arr, emptyMsg){
+    return `<div class="section-title">${title} (${arr.length})</div>${arr.length? arr.map(svcCard).join('') : `<div class="empty" style="padding:20px 10px">${emptyMsg}</div>`}`;
+  }
+  return `
+  <div class="cards-row" style="grid-template-columns:repeat(2,1fr)">
+    <div class="stat-card"><div class="label">Today</div><div class="value">${today.length}</div></div>
+    <div class="stat-card ${overdue.length?'danger':''}"><div class="label">Overdue</div><div class="value">${overdue.length}</div></div>
+    <div class="stat-card"><div class="label">Pending</div><div class="value">${pending.length}</div></div>
+    <div class="stat-card good"><div class="label">Completed</div><div class="value">${completedCount}</div></div>
+  </div>
+  ${overdue.length ? section('Overdue', overdue, '') : ''}
+  ${section("Today's services", today, 'Nothing due today.')}
+  ${section('Upcoming', upcoming.slice(0,6), 'No upcoming services scheduled.')}
+  `;
+}
+function techHistory(){
+  const tid = currentTechId();
+  const done = DB.services.filter(s=>s.technicianId===tid && s.status==='Completed').sort((a,b)=>(b.completedAt||'').localeCompare(a.completedAt||''));
+  return `<div class="section-title">Completed services (${done.length})</div>
+  ${done.length? done.map(s=>{ const c=custObj(s.customerId);
+    return `<div class="svc-card" data-action="tech-open" data-id="${s.id}">
+      <div class="top"><div><div class="cust">${c?c.name:''}</div><div class="meta">${s.type} · ${fmtDateTime(s.completedAt)}</div></div><span class="badge b-green">${money(s.totalAmount)}</span></div>
+    </div>`; }).join('') : emptyState('history','No completed jobs yet','Your finished services will show up here.')}`;
+}
+function techProfile(){
+  const t = byId(DB.technicians, currentTechId());
+  if(!t) return emptyState('user','No technician set up','Ask your admin to add a technician.');
+  const mine = DB.services.filter(s=>s.technicianId===t.id);
+  return `
+  <div class="panel"><div class="panel-body">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div class="icon-btn" style="width:52px;height:52px;cursor:default;color:var(--teal)">${ic('user')}</div>
+      <div><div style="font-weight:800;font-size:16px">${t.name}</div><div class="muted" style="font-size:12.5px">${t.mobile}</div></div>
+    </div>
+    <dl class="kv">
+      <dt>Email</dt><dd>${t.email||'—'}</dd>
+      <dt>Status</dt><dd><span class="badge ${t.status==='Active'?'b-green':'b-slate'}">${t.status}</span></dd>
+      <dt>Total jobs</dt><dd>${mine.length}</dd>
+      <dt>Completed</dt><dd>${mine.filter(s=>s.status==='Completed').length}</dd>
+    </dl>
+  </div></div>
+  <button class="btn block" data-action="logout">${ic('logout')} Switch role</button>`;
+}
+function techServiceScreen(id){
+  const s = byId(DB.services,id); if(!s){ STATE.activeTechServiceId=null; return techToday(); }
+  const c = custObj(s.customerId); const ro = roObj(s.roId);
+  const priorHistory = DB.services.filter(x=>x.roId===s.roId && x.status==='Completed' && x.id!==s.id).sort((a,b)=>(b.completedAt||'').localeCompare(a.completedAt||''));
+  return `
+  <button class="btn ghost sm" data-action="tech-back" style="margin-bottom:10px">${ic('chevL')} Back</button>
+  <div class="panel"><div class="panel-body">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div><div style="font-weight:800;font-size:16.5px">${c?c.name:'—'}</div><div class="muted" style="font-size:12.5px">${c?c.mobile:''}</div></div>
+      ${serviceBadge(s)}
+    </div>
+    <div class="muted" style="font-size:13px;margin-top:8px">${c?`${c.address}, ${c.area?c.area+', ':''}${c.city} ${c.pincode}`:''}</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn sm block" href="tel:${c?c.mobile:''}">${ic('phone')} Call</a>
+      <a class="btn sm block" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c?c.address+' '+c.city:'')}">${ic('pin')} Navigate</a>
+    </div>
+  </div></div>
+  <div class="panel"><div class="panel-body">
+    <dl class="kv">
+      <dt>RO model</dt><dd>${ro?ro.model:'—'}</dd>
+      <dt>Serial</dt><dd>${ro?ro.serial:'—'}</dd>
+      <dt>Installed</dt><dd>${ro?fmtDate(ro.installDate):'—'}</dd>
+      <dt>AMC</dt><dd>${amcForRo(s.roId)?amcBadge(amcForRo(s.roId)):'No AMC'}</dd>
+      <dt>Last service</dt><dd>${ro?fmtDate(ro.lastServiceDate):'—'}</dd>
+      <dt>Service type</dt><dd>${s.type}</dd>
+      <dt>Complaint</dt><dd>${s.complaint||'—'}</dd>
+      <dt>Scheduled</dt><dd>${fmtDate(s.scheduledDate)}</dd>
+    </dl>
+  </div></div>
+  ${priorHistory.length? `<div class="section-title">Previous services on this RO</div>
+    ${priorHistory.slice(0,3).map(h=>`<div class="svc-card"><div class="meta"><strong>${fmtDate(h.completedAt)}</strong> — ${h.type}</div><div class="meta">${h.workPerformed||h.remarks||''}</div></div>`).join('')}` : ''}
+  <div class="section-title">Actions</div>
+  <div class="row" style="margin-bottom:14px">
+    ${!['In Progress','Completed'].includes(s.status) ? `<button class="btn big primary block" data-action="tech-start" data-id="${s.id}">${ic('bolt')} Start Service</button>` : ''}
+    ${s.status==='In Progress' ? `<button class="btn big primary block" data-action="tech-complete" data-id="${s.id}">${ic('check')} Complete Service</button>` : ''}
+  </div>
+  ${s.status!=='Completed' ? `
+  <div class="panel"><div class="panel-body">
+    <div class="field"><label>Add remarks</label><textarea id="tech-remark-input" rows="2" placeholder="e.g. Diagnosed low pressure, replacing sediment filter">${s.remarks||''}</textarea></div>
+    <button class="btn sm" data-action="tech-save-remark" data-id="${s.id}">${ic('check')} Save remark</button>
+  </div></div>` : ''}
+  ${s.status==='Completed' ? `<div class="panel"><div class="panel-body">
+    <div class="muted" style="font-size:12px;margin-bottom:6px">Job card</div>
+    <dl class="kv">
+      <dt>Work performed</dt><dd>${s.workPerformed||'—'}</dd>
+      <dt>Parts</dt><dd>${(s.partsUsed||[]).map(p=>`${p.name} ×${p.qty}`).join(', ')||'—'}</dd>
+      <dt>Total</dt><dd><strong>${money(s.totalAmount)}</strong></dd>
+      <dt>Payment</dt><dd>${s.paymentStatus} ${s.paymentMode?'· '+s.paymentMode:''}</dd>
+    </dl>
+  </div></div>` : ''}`;
+}
+function techStart(id){
+  const s = byId(DB.services,id); s.status='In Progress'; persist(); toast('Service started'); render();
+}
+function techSaveRemark(id){
+  const s = byId(DB.services,id);
+  const val = document.getElementById('tech-remark-input')?.value || '';
+  s.remarks = val; persist(); toast('Remark saved'); render();
+}
+function fileToDataURL(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=>res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+function completionForm(id){
+  const s = byId(DB.services,id); const c = custObj(s.customerId);
+  const body = `
+    <input type="hidden" name="id" value="${id}">
+    <p class="muted" style="margin-top:0">Completing service for <strong>${c?c.name:''}</strong></p>
+    ${fld('Work performed','workPerformed',s.workPerformed,'textarea',{rows:2, required:true})}
+    <div class="field"><label>Parts used (name × qty @ cost, one per line)</label><textarea name="partsText" rows="2" placeholder="Sediment Filter x1 @250">${(s.partsUsed||[]).map(p=>`${p.name} x${p.qty} @${p.cost}`).join('\\n')}</textarea></div>
+    <div class="field-row">${fld('Labour cost','laborCost',s.laborCost||0,'number')}${fld('Additional charges','additionalCharges',s.additionalCharges||0,'number')}</div>
+    <div class="field-row">${fld('Discount','discount',s.discount||0,'number')}${fld('Payment mode','paymentMode',s.paymentMode||'Cash','select',{options:['Cash','UPI','Bank Transfer','Card','Online Payment','Pending']})}</div>
+    ${fld('Customer signature (type full name)','signature',s.signature,'text',{required:true})}
+    <div class="field-row">
+      <div class="field"><label>Before photo</label><input type="file" accept="image/*" capture="environment" name="beforePhotoFile"></div>
+      <div class="field"><label>After photo</label><input type="file" accept="image/*" capture="environment" name="afterPhotoFile"></div>
+    </div>`;
+  openModal(modalShell('Complete service', body, 'Mark completed', 'submit-completion'));
+}
+async function handleSubmitCompletion(form){
+  const o = formToObj(form);
+  const s = byId(DB.services,o.id);
+  const partsUsed = (o.partsText||'').split('\\n').map(l=>l.trim()).filter(Boolean).map(line=>{
+    const m = line.match(/^(.*?)\\s*x(\\d+(?:\\.\\d+)?)\\s*@(\\d+(?:\\.\\d+)?)/i);
+    if(m) return {name:m[1].trim(), qty:Number(m[2]), cost:Number(m[3])};
+    return {name:line, qty:1, cost:0};
+  });
+  const partsCost = partsUsed.reduce((a,p)=>a+p.qty*p.cost,0);
+  const labor = Number(o.laborCost||0), extra=Number(o.additionalCharges||0), disc=Number(o.discount||0);
+  s.workPerformed = o.workPerformed; s.partsUsed = partsUsed; s.partsCost = partsCost;
+  s.laborCost = labor; s.additionalCharges = extra; s.discount = disc;
+  s.totalAmount = Math.max(0, partsCost+labor+extra-disc);
+  s.paymentMode = o.paymentMode; s.paymentStatus = o.paymentMode==='Pending' ? 'Pending' : 'Paid';
+  s.signature = o.signature; s.status = 'Completed'; s.completedAt = new Date().toISOString();
+
+  const beforeFile = form.querySelector('[name="beforePhotoFile"]').files[0];
+  const afterFile = form.querySelector('[name="afterPhotoFile"]').files[0];
+  try{
+    if(beforeFile) s.beforePhoto = await fileToDataURL(beforeFile);
+    if(afterFile) s.afterPhoto = await fileToDataURL(afterFile);
+  }catch(e){ /* ignore photo errors */ }
+
+  // update RO next service date + AMC usage
+  const ro = roObj(s.roId);
+  if(ro){ ro.lastServiceDate = todayISO(); ro.nextServiceDate = addMonths(todayISO(), freqMonths(ro.serviceFrequency)); ro.status='Active';
+    const amc = amcForRo(ro.id);
+    if(amc && amc.servicesUsed < amc.servicesIncluded) amc.servicesUsed += 1;
+  }
+  persist(); closeModal(); toast('Service completed'); render();
+}
+
+
+/* ============================= AUTH + UX HARDENING ============================= */
+function loginUser(form){
+  const data=formToObj(form); const role=data.role||STATE.loginRole||'admin';
+  const u=(DB.users||[]).find(x=>x.username===String(data.username||'').trim() && x.password===String(data.password||'') && x.role===role && x.status!=='Inactive');
+  if(!u){ toast('Invalid user ID or password'); return; }
+  STATE.role=u.role; STATE.loginRole=u.role; STATE.userId=u.id; STATE.username=u.username; STATE.technicianId=u.technicianId||null;
+  STATE.adminView='dashboard'; STATE.techView='today'; STATE.activeCustomerId=null; STATE.activeServiceId=null; STATE.activeTechServiceId=null; STATE.sidebarOpen=false;
+  toast('Signed in successfully'); render();
+  if(STATE.role==='admin' && !STATE.pushChecked){STATE.pushChecked=true;setTimeout(maybeShowPushReminders,500);}
+}
+function changeTechPassword(id){
+  const u=(DB.users||[]).find(x=>x.technicianId===id);
+  const t=byId(DB.technicians,id); if(!u||!t){toast('Technician login not found');return;}
+  openModal(modalShell('Change technician password', `<input type="hidden" name="techId" value="${id}">${fld('Technician','techName',t.name,'text')}<div class="field"><label>Login ID</label><input value="${escAttr(u.username)}" disabled></div>${fld('New password','password','', 'password',{required:true})}${fld('Confirm password','confirmPassword','','password',{required:true})}`, 'Update password','submit-tech-password'));
+}
+function handleTechPassword(form){
+  const o=formToObj(form); const t=byId(DB.technicians,o.techId||'');
+  const u=(DB.users||[]).find(x=>x.technicianId===o.techId && x.role==='technician');
+  if(!u){toast('Technician login not found');return;} if(o.password.length<6){toast('Password must be at least 6 characters');return;} if(o.password!==o.confirmPassword){toast('Passwords do not match');return;}
+  u.password=o.password; persist(); closeModal(); toast('Technician password updated');
+}
+function toggleCustomerStatus(id){ const c=custObj(id); if(!c)return; c.status=c.status==='Active'?'Inactive':'Active'; persist(); toast(`Customer marked ${c.status.toLowerCase()}`); render(); }
+function closePushToast(el){ if(el) el.remove(); }
+
+/* ============================= EVENT DELEGATION ============================= */
+document.addEventListener('click', function(e){
+  const el = e.target.closest('[data-action]');
+  if(!el) return;
+  const action = el.getAttribute('data-action');
+  const id = el.getAttribute('data-id');
+
+  switch(action){
+    case 'login-role': STATE.loginRole=el.getAttribute('data-role')||'admin'; render(); setTimeout(()=>document.getElementById('login-username')?.focus(),20); break;
+    case 'toggle-password': { const p=document.getElementById('login-password'); if(p){ const show=p.type==='password'; p.type=show?'text':'password'; el.setAttribute('title',show?'Hide password':'Show password'); el.innerHTML=ic(show?'eyeOff':'eye'); } break; }
+    case 'toggle-theme': toggleTheme(); break;
+    case 'close-push-toast': closePushToast(el.closest('.push-toast')); break;
+    case 'logout': STATE.role=null; STATE.loginRole='admin'; STATE.userId=null; STATE.username=''; STATE.technicianId=null; STATE.adminView='dashboard'; STATE.techView='today'; STATE.activeCustomerId=null; STATE.activeServiceId=null; STATE.activeTechServiceId=null; STATE.pushChecked=false; STATE.sidebarOpen=false; render(); break;
+    case 'nav': STATE.adminView = el.getAttribute('data-view'); STATE.activeCustomerId=null; STATE.activeServiceId=null; STATE.sidebarOpen=false; render(); break;
+    case 'toggle-sidebar': STATE.sidebarOpen = !STATE.sidebarOpen; render(); break;
+    case 'close-sidebar': STATE.sidebarOpen = false; render(); break;
+    case 'notif-filter': STATE.notifFilter = el.getAttribute('data-filter'); render(); break;
+    case 'notif-toggle-read': toggleNotifRead(id); break;
+    case 'notif-close': { e.stopPropagation(); dismissNotification(id); break; }
+    case 'mark-all-read': markAllNotifsRead(); break;
+    case 'enable-push': requestPushPermission(); break;
+    case 'tech-nav': STATE.techView = el.getAttribute('data-view'); STATE.activeTechServiceId=null; render(); break;
+
+    case 'add-customer': customerForm(); break;
+    case 'edit-customer': customerForm(id); break;
+    case 'delete-customer': deleteEntity('customer', id); break;
+    case 'toggle-customer-status': toggleCustomerStatus(id); break;
+    case 'change-tech-password': changeTechPassword(id); break;
+    case 'view-customer': e.preventDefault(); STATE.adminView='customers'; STATE.activeCustomerId=id; render(); break;
+    case 'back-customers': STATE.activeCustomerId=null; render(); break;
+
+    case 'add-ro': roForm(null, el.getAttribute('data-cust')||STATE.activeCustomerId); break;
+    case 'edit-ro': roForm(id); break;
+    case 'delete-ro': deleteEntity('ro', id); break;
+
+    case 'add-amc': amcForm(); break;
+    case 'edit-amc': amcForm(id); break;
+    case 'delete-amc': deleteEntity('amc', id); break;
+
+    case 'add-service': serviceForm(); break;
+    case 'edit-service': serviceForm(id); break;
+    case 'delete-service': deleteEntity('service', id); break;
+    case 'view-service': STATE.adminView='services'; STATE.activeServiceId=id; render(); break;
+    case 'back-services': STATE.activeServiceId=null; render(); break;
+    case 'assign-tech': assignForm(id); break;
+
+    case 'add-tech': techForm(); break;
+    case 'edit-tech': techForm(id); break;
+    case 'delete-tech': deleteEntity('tech', id); break;
+
+    case 'cal-prev': STATE.calMonth--; if(STATE.calMonth<0){STATE.calMonth=11; STATE.calYear--;} render(); break;
+    case 'cal-next': STATE.calMonth++; if(STATE.calMonth>11){STATE.calMonth=0; STATE.calYear++;} render(); break;
+    case 'cal-today': STATE.calMonth=new Date().getMonth(); STATE.calYear=new Date().getFullYear(); STATE.calSelected=todayISO(); render(); break;
+    case 'cal-day': STATE.calSelected = el.getAttribute('data-date'); render(); break;
+
+    case 'export-csv': exportCSV(el.getAttribute('data-report'), window.__reportData?.[el.getAttribute('data-report')]||[]); break;
+    case 'export-json': { const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='aquaflow_backup.json'; a.click(); URL.revokeObjectURL(url); break; }
+    case 'reset-data': if(confirm('Reset all data to the sample dataset? This removes anything you added.')){ DB = seedData(); persist(); toast('Data reset'); render(); } break;
+
+    case 'close-modal': closeModal(); break;
+    case 'close-modal-backdrop': if(e.target===el) closeModal(); break;
+
+    case 'tech-open': STATE.activeTechServiceId=id; render(); break;
+    case 'tech-back': STATE.activeTechServiceId=null; render(); break;
+    case 'tech-start': techStart(id); break;
+    case 'tech-complete': completionForm(id); break;
+    case 'tech-save-remark': techSaveRemark(id); break;
+  }
+});
+document.addEventListener('submit', function(e){
+  const form = e.target.closest('[data-action]');
+  if(!form) return;
+  const action = form.getAttribute('data-action');
+  if(!action.startsWith('submit-')) return;
+  e.preventDefault();
+  switch(action){
+    case 'submit-customer': handleSubmitCustomer(form); break;
+    case 'submit-ro': handleSubmitRO(form); break;
+    case 'submit-amc': handleSubmitAMC(form); break;
+    case 'submit-service': handleSubmitService(form); break;
+    case 'submit-tech': handleSubmitTech(form); break;
+    case 'submit-assign': handleSubmitAssign(form); break;
+    case 'submit-settings': handleSubmitSettings(form); break;
+    case 'submit-completion': handleSubmitCompletion(form); break;
+    case 'submit-login': loginUser(form); break;
+    case 'submit-tech-password': handleTechPassword(form); break;
+  }
+});
+
+function renderPartial(elId, fn){
+  const el = document.getElementById(elId);
+  if(el) el.innerHTML = fn();
+}
+
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(STATE.modal){closeModal();return;}
+    if(STATE.sidebarOpen){STATE.sidebarOpen=false;render();}
+  }
+});
+
+/* ============================= V8 PROFESSIONAL ENHANCEMENT LAYER =============================
+   Goals: safer data entry, stronger workflows, better mobile UX, keyboard navigation,
+   local backup/restore, dynamic form relationships, diagnostics and polished micro-interactions.
+*/
+(function AquaFlowV8(){
+  'use strict';
+
+  const APP_VERSION = '8.0.0';
+  window.AquaFlow = Object.assign(window.AquaFlow || {}, { version: APP_VERSION });
+  window.__afLastSaved = new Date();
+
+  /* ---------- safer HTML helpers ---------- */
+  const htmlEscape = value => String(value == null ? '' : value)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const safeUrl = value => {
+    try {
+      const u = new URL(String(value || ''), location.href);
+      return ['http:','https:','tel:'].includes(u.protocol) ? u.href : '#';
+    } catch (_) { return '#'; }
+  };
+  window.afEscape = htmlEscape;
+
+  /* ---------- data hygiene ---------- */
+  const basePersist = persist;
+  persist = function(){
+    try {
+      DB.version = APP_VERSION;
+      DB.meta = DB.meta || {};
+      DB.meta.updatedAt = new Date().toISOString();
+      basePersist();
+      window.__afLastSaved = new Date();
+      updateSaveIndicator();
+    } catch (err) {
+      console.error('AquaFlow save failed', err);
+      toast('Could not save changes. Export a backup before continuing.');
+    }
+  };
+
+  function updateSaveIndicator(){
+    const el = document.getElementById('af-save-status');
+    if(!el) return;
+    const d = window.__afLastSaved instanceof Date ? window.__afLastSaved : new Date();
+    el.textContent = `Saved ${d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+    el.title = `Last local save: ${d.toLocaleString('en-IN')}`;
+  }
+
+  function normalizeDB(){
+    DB.customers = Array.isArray(DB.customers) ? DB.customers : [];
+    DB.roMachines = Array.isArray(DB.roMachines) ? DB.roMachines : [];
+    DB.amcs = Array.isArray(DB.amcs) ? DB.amcs : [];
+    DB.services = Array.isArray(DB.services) ? DB.services : [];
+    DB.technicians = Array.isArray(DB.technicians) ? DB.technicians : [];
+    DB.users = Array.isArray(DB.users) ? DB.users : [];
+    DB.notificationsRead = DB.notificationsRead && typeof DB.notificationsRead==='object' ? DB.notificationsRead : {};
+    DB.notificationsDismissed = DB.notificationsDismissed && typeof DB.notificationsDismissed==='object' ? DB.notificationsDismissed : {};
+    DB.settings = DB.settings || {companyName:'AquaFlow RO Services',serviceReminderDays:[1,2,3,7],amcReminderDays:[60,30,15,7,1],pushEnabled:true};
+    DB.meta = DB.meta || {};
+
+    DB.customers.forEach(c=>{
+      c.status = c.status || 'Active';
+      c.type = c.type || c.customerType || 'Residential';
+      c.waterRoType = c.waterRoType || c.purificationType || 'RO';
+      c.mobile = String(c.mobile || '').trim();
+    });
+    DB.roMachines.forEach(r=>{
+      r.roType = r.roType || r.purificationType || 'RO';
+      r.purificationType = r.purificationType || r.roType;
+      r.price = Number(r.price || 0);
+      r.status = r.status || 'Active';
+    });
+    DB.services.forEach(s=>{
+      s.priority = s.priority || 'Normal';
+      s.status = s.status || 'New';
+      s.partsUsed = Array.isArray(s.partsUsed) ? s.partsUsed : [];
+      s.paymentStatus = s.paymentStatus || 'Pending';
+    });
+  }
+  normalizeDB();
+
+  /* ---------- robust validation ---------- */
+  function setFieldError(field, message){
+    if(!field) return;
+    clearFieldError(field);
+    field.classList.add('af-invalid');
+    const wrap = field.closest('.field') || field.parentElement;
+    if(wrap){
+      const error = document.createElement('div');
+      error.className='af-field-error';
+      error.textContent=message;
+      wrap.appendChild(error);
+    }
+  }
+  function clearFieldError(field){
+    if(!field) return;
+    field.classList.remove('af-invalid');
+    const wrap = field.closest('.field') || field.parentElement;
+    wrap?.querySelector('.af-field-error')?.remove();
+  }
+  function validatePhone(value){ return /^\d{10}$/.test(String(value||'').replace(/\D/g,'')); }
+  function validateEmail(value){ return !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); }
+  function validateForm(form){
+    let ok=true, first=null;
+    form.querySelectorAll('.af-invalid').forEach(x=>clearFieldError(x));
+    form.querySelectorAll('[required]').forEach(field=>{
+      if(!String(field.value||'').trim()){
+        setFieldError(field,'This field is required.'); ok=false; first=first||field;
+      }
+    });
+    const mobile=form.querySelector('[name="mobile"]');
+    if(mobile && mobile.value && !validatePhone(mobile.value)){ setFieldError(mobile,'Enter a valid 10-digit mobile number.'); ok=false; first=first||mobile; }
+    const email=form.querySelector('[name="email"]');
+    if(email && email.value && !validateEmail(email.value)){ setFieldError(email,'Enter a valid email address.'); ok=false; first=first||email; }
+    const start=form.querySelector('[name="startDate"]'), end=form.querySelector('[name="endDate"]');
+    if(start?.value && end?.value && end.value < start.value){ setFieldError(end,'End date cannot be before start date.'); ok=false; first=first||end; }
+    const scheduled=form.querySelector('[name="scheduledDate"]'), due=form.querySelector('[name="dueDate"]');
+    if(scheduled?.value && due?.value && due.value < scheduled.value){ setFieldError(due,'Due date cannot be before scheduled date.'); ok=false; first=first||due; }
+    const amount=form.querySelectorAll('input[type="number"]');
+    amount.forEach(field=>{ if(field.value!=='' && Number(field.value)<0){ setFieldError(field,'Value cannot be negative.'); ok=false; first=first||field; }});
+    if(first){ first.focus(); toast('Please check the highlighted fields.'); }
+    return ok;
+  }
+
+  /* ---------- enhanced modal ---------- */
+  const baseOpenModal = openModal;
+  openModal = function(html){
+    baseOpenModal(html);
+    requestAnimationFrame(()=>{
+      const root=document.getElementById('modal-root');
+      const first=root?.querySelector('input:not([type="hidden"]),select,textarea,button');
+      if(first && !root.querySelector('[data-action="close-modal"]:focus')) first.focus({preventScroll:true});
+      root?.querySelector('form')?.addEventListener('input', ev=>{
+        if(ev.target.matches('.af-invalid')) clearFieldError(ev.target);
+      });
+    });
+  };
+
+  /* ---------- enhanced confirmation dialog ---------- */
+  let pendingConfirm = null;
+  function confirmAction(title, message, confirmLabel, action, meta={}){
+    pendingConfirm={action,meta};
+    const body=`<div class="af-confirm-icon">${ic(action==='delete'?'trash':'shield')}</div>
+      <div class="af-confirm-copy"><h4>${htmlEscape(title)}</h4><p>${htmlEscape(message)}</p></div>`;
+    openModal(`<div class="modal-head"><h3>${htmlEscape(title)}</h3><button type="button" class="icon-btn modal-close-btn" data-action="close-modal" aria-label="Close">${ic('x')}</button></div>
+      <div class="modal-body af-confirm-body">${body}</div>
+      <div class="modal-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button type="button" class="btn danger" data-action="confirm-pending">${ic('check')} ${htmlEscape(confirmLabel)}</button></div>`);
+  }
+
+  /* ---------- safer delete semantics with dependency awareness ---------- */
+  const baseDeleteEntity = deleteEntity;
+  deleteEntity = function(kind,id){
+    const labels={customer:'customer',ro:'RO machine',amc:'AMC contract',service:'service',tech:'technician'};
+    const label=labels[kind]||'record';
+    const item = ({customer:DB.customers,ro:DB.roMachines,amc:DB.amcs,service:DB.services,tech:DB.technicians}[kind]||[]).find(x=>x.id===id);
+    if(!item) return toast('Record not found.');
+    let detail=`Delete ${label} “${item.name||item.model||item.plan||item.type||'record'}”? This action cannot be undone.`;
+    if(kind==='customer'){
+      const ros=DB.roMachines.filter(r=>r.customerId===id).length;
+      const amcs=DB.amcs.filter(a=>a.customerId===id).length;
+      const services=DB.services.filter(s=>s.customerId===id).length;
+      detail += ` Related RO machines (${ros}), AMC contracts (${amcs}) and services (${services}) will also be removed from this browser dataset.`;
+    }
+    confirmAction(`Delete ${label}`,detail,'Delete','delete',{kind,id});
+  };
+
+  function performDelete(kind,id){
+    const map={customer:'customers',ro:'roMachines',amc:'amcs',service:'services',tech:'technicians'};
+    if(kind==='customer'){
+      DB.services=DB.services.filter(x=>x.customerId!==id);
+      DB.amcs=DB.amcs.filter(x=>x.customerId!==id);
+      DB.roMachines=DB.roMachines.filter(x=>x.customerId!==id);
+      DB.customers=DB.customers.filter(x=>x.id!==id);
+      if(STATE.activeCustomerId===id) STATE.activeCustomerId=null;
+    }else if(map[kind]){
+      DB[map[kind]]=DB[map[kind]].filter(x=>x.id!==id);
+      if(kind==='tech') DB.users=DB.users.filter(u=>u.technicianId!==id);
+      if(kind==='ro'){
+        DB.amcs.forEach(a=>{if(a.roId===id)a.roId='';});
+        DB.services.forEach(svc=>{if(svc.roId===id)svc.roId='';});
+      }
+    }
+    persist(); toast('Record deleted'); render();
+  }
+
+  /* ---------- command palette ---------- */
+  const commandItems=[
+    ['Dashboard','dash','nav','dashboard'],['Customers','users','nav','customers'],['RO Machines','ro','nav','ro'],
+    ['AMC Contracts','shield','nav','amc'],['Services','wrench','nav','services'],['Service Requests','clipboard','nav','requests'],
+    ['Technicians','tech','nav','technicians'],['Calendar','calendar','nav','calendar'],['Notifications','bell','nav','notifications'],
+    ['Reports','chart','nav','reports'],['Settings','gear','nav','settings'],
+    ['New Customer','plus','new','customer'],['New Service','plus','new','service'],['New AMC','plus','new','amc'],
+    ['New RO Machine','plus','new','ro'],['Toggle dark mode','moon','theme','']
+  ];
+  function openCommandPalette(){
+    const list=commandItems.map((x,i)=>`<button class="af-command-item" data-action="command-item" data-command-index="${i}">${ic(x[1])}<span>${x[0]}</span><kbd>${i<11?String(i+1):''}</kbd></button>`).join('');
+    openModal(`<div class="modal-head"><div><h3>Quick navigation</h3><div class="muted af-command-sub">Jump anywhere in AquaFlow</div></div><button type="button" class="icon-btn modal-close-btn" data-action="close-modal" aria-label="Close">${ic('x')}</button></div>
+      <div class="modal-body"><div class="search-input af-command-search">${ic('search')}<input id="af-command-search" placeholder="Search actions…" autocomplete="off"></div><div id="af-command-list" class="af-command-list">${list}</div><div class="af-command-help"><span><kbd>Ctrl</kbd> + <kbd>K</kbd> Open</span><span><kbd>Esc</kbd> Close</span></div></div>`);
+    setTimeout(()=>document.getElementById('af-command-search')?.focus(),20);
+  }
+  function runCommand(index){
+    const item=commandItems[Number(index)]; if(!item) return;
+    closeModal();
+    if(item[2]==='nav'){ STATE.adminView=item[3]; STATE.activeCustomerId=null; STATE.activeServiceId=null; render(); }
+    else if(item[2]==='new'){ ({customer:customerForm,service:serviceForm,amc:amcForm,ro:roForm}[item[3]]||(()=>{}))(); }
+    else if(item[2]==='theme'){ toggleTheme(); }
+  }
+
+  /* ---------- dynamic customer -> RO relationship ---------- */
+  function refreshROOptions(selectCustomer, selectRO){
+    if(!selectCustomer || !selectRO) return;
+    const selected=selectRO.value;
+    const customerId=selectCustomer.value;
+    const ros=DB.roMachines.filter(r=>r.customerId===customerId);
+    selectRO.innerHTML='<option value="">— select —</option>'+ros.map(r=>`<option value="${htmlEscape(r.id)}">${htmlEscape(r.model||'RO machine')}${r.serial?' ('+htmlEscape(r.serial)+')':''}</option>`).join('');
+    if(ros.some(r=>r.id===selected)) selectRO.value=selected;
+  }
+
+  /* ---------- restore backup ---------- */
+  function openRestore(){
+    openModal(`<div class="modal-head"><div><h3>Restore local backup</h3><div class="muted">Import an AquaFlow JSON backup from this device.</div></div><button type="button" class="icon-btn modal-close-btn" data-action="close-modal">${ic('x')}</button></div>
+      <div class="modal-body"><div class="af-upload-zone"><div class="af-upload-icon">${ic('download')}</div><strong>Select backup JSON</strong><span>Current browser data will be replaced after confirmation.</span><input id="af-backup-file" type="file" accept="application/json,.json"></div><div id="af-backup-preview" class="af-backup-preview hidden"></div></div>
+      <div class="modal-foot"><button type="button" class="btn" data-action="close-modal">Cancel</button><button type="button" class="btn primary" data-action="restore-backup">${ic('check')} Restore backup</button></div>`);
+    document.getElementById('af-backup-file')?.addEventListener('change', async e=>{
+      const file=e.target.files?.[0]; const preview=document.getElementById('af-backup-preview');
+      if(!file||!preview) return;
+      try{ const data=JSON.parse(await file.text());
+        const counts=['customers','roMachines','amcs','services','technicians'].map(k=>`${k}: ${Array.isArray(data[k])?data[k].length:0}`).join(' · ');
+        preview.textContent=`Valid JSON backup · ${counts}`; preview.classList.remove('hidden'); window.__afRestoreData=data;
+      }catch(err){ window.__afRestoreData=null; preview.textContent='Invalid JSON backup file.'; preview.classList.remove('hidden'); }
+    });
+  }
+  function restoreBackup(){
+    if(!window.__afRestoreData) return toast('Choose a valid AquaFlow JSON backup first.');
+    confirmAction('Restore backup','This will replace all current browser data with the selected backup. Export your current data first if you need it.','Restore','restore');
+  }
+  function applyRestore(){
+    try{
+      const incoming=JSON.parse(JSON.stringify(window.__afRestoreData));
+      DB=incoming; normalizeDB(); persist(); window.__afRestoreData=null; closeModal(); toast('Backup restored successfully'); render();
+    }catch(err){ console.error(err); toast('Backup could not be restored.'); }
+  }
+
+  /* ---------- print service job card ---------- */
+  function printService(id){
+    const s=byId(DB.services,id), c=s&&custObj(s.customerId), r=s&&roObj(s.roId), t=s&&byId(DB.technicians,s.technicianId);
+    if(!s) return toast('Service not found.');
+    const w=window.open('','_blank','noopener,noreferrer,width=820,height=900');
+    if(!w) return toast('Allow pop-ups to print the job card.');
+    const rows=[['Service ID',s.id],['Customer',c?.name||'—'],['Mobile',c?.mobile||'—'],['Address',c?`${c.address||''}, ${c.city||''} ${c.pincode||''}`:'—'],['RO model',r?.model||'—'],['Serial',r?.serial||'—'],['Technician',t?.name||'Unassigned'],['Type',s.type],['Scheduled',fmtDate(s.scheduledDate)],['Status',s.status],['Complaint',s.complaint||'—'],['Work performed',s.workPerformed||'—'],['Total',money(s.totalAmount)],['Payment',`${s.paymentStatus||'Pending'} ${s.paymentMode?`· ${s.paymentMode}`:''}`]];
+    w.document.write(`<!doctype html><html><head><title>AquaFlow Job Card ${htmlEscape(s.id)}</title><style>body{font:14px Arial,sans-serif;color:#15252b;margin:36px}h1{font:700 24px Arial;margin:0}h2{font-size:15px;margin:28px 0 10px}p{color:#60747c}.brand{display:flex;justify-content:space-between;border-bottom:2px solid #0b5e73;padding-bottom:16px}.grid{display:grid;grid-template-columns:180px 1fr;border:1px solid #d9e4e8}.row{display:contents}.row>div{padding:9px 11px;border-bottom:1px solid #e6edef}.label{font-weight:700;background:#f2f7f8}.footer{margin-top:32px;font-size:11px;color:#7b8d94}@media print{body{margin:16px}}
+/* =====================================================================
+   V9 production UX layer — accessibility, density, mobile ergonomics
+   ===================================================================== */
+:root{--touch:44px;--panel-max:1500px;}
+body{overflow-x:hidden;}
+button,.btn,.icon-btn,.sb-item,.tb-item{min-height:var(--touch);}
+.icon-btn{min-width:var(--touch);}
+.table-wrap{overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+.panel{overflow:hidden;}
+.empty-state{padding:48px 20px;text-align:center;border:1px dashed var(--border);border-radius:var(--r-lg);background:var(--surface-2);}
+.empty-state h3{margin:10px 0 4px;font-size:18px}.empty-state p{margin:0 auto 16px;max-width:520px;color:var(--ink-muted)}
+.field .error{display:none;color:var(--red);font-size:11px;font-weight:700;margin-top:4px}.field.invalid input,.field.invalid select,.field.invalid textarea{border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 14%,transparent)}.field.invalid .error{display:block}
+.af-server-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border:1px solid var(--border);border-radius:999px;font-size:11px;font-weight:800;color:var(--ink-muted);background:var(--surface)}
+.af-server-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--amber)}.af-server-pill.online .dot{background:var(--green)}.af-server-pill.offline .dot{background:var(--red)}
+.af-syncing{opacity:.65;pointer-events:none}
+.af-kbd{font:600 11px/1 ui-monospace,SFMono-Regular,Consolas,monospace;border:1px solid var(--border);background:var(--surface-2);border-radius:5px;padding:4px 6px;color:var(--ink-muted)}
+.toast-stack{z-index:10000}
+@media(max-width:900px){.af-login{grid-template-columns:1fr}.af-login-hero{min-height:300px;padding:28px}.af-login-hero .hero-copy{max-width:650px}.af-login-hero .feature-grid{display:none}.content{padding:16px!important}.topbar{padding:10px 14px!important}.panel-head{gap:10px;flex-wrap:wrap}.panel-head .actions{width:100%;justify-content:flex-start}}
+@media(max-width:600px){body{font-size:14px}.modal-backdrop{padding:10px!important}.modal{width:100%!important;max-height:94vh!important;border-radius:18px!important}.modal-foot{position:sticky;bottom:0;background:var(--surface);padding-top:12px}.search-row{flex-wrap:wrap}.btn{min-height:44px}.icon-btn{min-width:44px}.table-wrap table{min-width:760px}.cards-row{grid-template-columns:1fr!important}.stat-card .value{font-size:24px}.af-login-hero{min-height:230px}.af-login-form{padding:24px!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}}
+</style></head><body><div class="brand"><div><h1>AquaFlow</h1><p>RO Service & AMC Manager · Service Job Card</p></div><strong>${htmlEscape(s.id)}</strong></div><h2>Service details</h2><div class="grid">${rows.map(r=>`<div class="row"><div class="label">${htmlEscape(r[0])}</div><div>${htmlEscape(r[1])}</div></div>`).join('')}</div><div class="footer">Generated locally by AquaFlow · ${new Date().toLocaleString('en-IN')}</div><script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);
+    w.document.close();
+  }
+
+  /* ---------- enhanced service submission ---------- */
+  const baseHandleService = handleSubmitService;
+  handleSubmitService = function(form){
+    if(!validateForm(form)) return;
+    const o=formToObj(form);
+    if(!o.customerId){toast('Select a customer.');return;}
+    if(o.roId && !DB.roMachines.some(r=>r.id===o.roId && r.customerId===o.customerId)){toast('Selected RO machine does not belong to this customer.');return;}
+    if(o.technicianId && !DB.technicians.some(t=>t.id===o.technicianId && t.status==='Active')){toast('Select an active technician.');return;}
+    baseHandleService(form);
+  };
+
+  const baseHandleCustomer = handleSubmitCustomer;
+  handleSubmitCustomer = function(form){ if(!validateForm(form)) return; baseHandleCustomer(form); };
+  const baseHandleRO = handleSubmitRO;
+  handleSubmitRO = function(form){ if(!validateForm(form)) return; baseHandleRO(form); };
+  const baseHandleAMC = handleSubmitAMC;
+  handleSubmitAMC = function(form){ if(!validateForm(form)) return; baseHandleAMC(form); };
+  const baseHandleTech = handleSubmitTech;
+  handleSubmitTech = function(form){ if(!validateForm(form)) return; baseHandleTech(form); };
+  const baseHandleAssign = handleSubmitAssign;
+  handleSubmitAssign = function(form){ if(!validateForm(form)) return; baseHandleAssign(form); };
+
+  /* ---------- service status workflow helpers ---------- */
+  function progressService(id){
+    const s=byId(DB.services,id); if(!s)return;
+    const next={New:'Pending',Pending:'Scheduled',Scheduled:'Assigned',Assigned:'On the Way','On the Way':'In Progress','Waiting for Parts':'In Progress'}[s.status];
+    if(next){s.status=next; persist(); toast(`Service moved to ${next}`); render();}
+    else if(s.status==='In Progress'){ completionForm(id); }
+  }
+
+  /* ---------- diagnostics ---------- */
+  function runDiagnostics(){
+    const issues=[];
+    const customerIds=new Set(DB.customers.map(x=>x.id));
+    const roIds=new Set(DB.roMachines.map(x=>x.id));
+    const techIds=new Set(DB.technicians.map(x=>x.id));
+    DB.roMachines.forEach(r=>{if(!customerIds.has(r.customerId))issues.push(`RO ${r.id} references a missing customer.`);});
+    DB.amcs.forEach(a=>{if(!customerIds.has(a.customerId))issues.push(`AMC ${a.id} references a missing customer.`);if(a.roId&&!roIds.has(a.roId))issues.push(`AMC ${a.id} references a missing RO.`);});
+    DB.services.forEach(s=>{if(!customerIds.has(s.customerId))issues.push(`Service ${s.id} references a missing customer.`);if(s.roId&&!roIds.has(s.roId))issues.push(`Service ${s.id} references a missing RO.`);if(s.technicianId&&!techIds.has(s.technicianId))issues.push(`Service ${s.id} references a missing technician.`);});
+    return issues;
+  }
+  function showDiagnostics(){
+    const issues=runDiagnostics();
+    openModal(`<div class="modal-head"><div><h3>System diagnostics</h3><div class="muted">Local data integrity and browser storage check</div></div><button type="button" class="icon-btn modal-close-btn" data-action="close-modal">${ic('x')}</button></div>
+      <div class="modal-body"><div class="af-diagnostic-grid"><div><strong>${DB.customers.length}</strong><span>Customers</span></div><div><strong>${DB.services.length}</strong><span>Services</span></div><div><strong>${DB.roMachines.length}</strong><span>RO machines</span></div><div><strong>${DB.technicians.length}</strong><span>Technicians</span></div></div>
+      <div class="af-diagnostic-status ${issues.length?'bad':'good'}">${ic(issues.length?'x':'check')} <div><strong>${issues.length?'Attention required':'All checks passed'}</strong><span>${issues.length?`${issues.length} relationship issue(s) found.`:'No broken customer, RO or technician references detected.'}</span></div></div>
+      ${issues.length?`<ul class="af-issue-list">${issues.map(x=>`<li>${htmlEscape(x)}</li>`).join('')}</ul>`:''}
+      <div class="muted" style="font-size:11.5px;margin-top:14px">Storage: browser localStorage · App version ${APP_VERSION} · Last save ${window.__afLastSaved.toLocaleString('en-IN')}</div></div>`);
+  }
+
+  /* ---------- keyboard shortcuts ---------- */
+  document.addEventListener('keydown',function(e){
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){e.preventDefault(); if(!STATE.modal) openCommandPalette(); return;}
+    if(STATE.modal && e.key>='1' && e.key<='9' && document.getElementById('af-command-list')){
+      const idx=Number(e.key)-1; const btn=document.querySelectorAll('.af-command-item')[idx]; if(btn){e.preventDefault();runCommand(idx);} return;
+    }
+    if(!STATE.modal && STATE.role==='admin' && e.key.toLowerCase()==='n' && !/input|textarea|select/i.test(e.target.tagName||'')){e.preventDefault();serviceForm();}
+  });
+
+  /* ---------- event enhancements ---------- */
+  document.addEventListener('change',function(e){
+    const target=e.target;
+    if(target.name==='customerId' && STATE.modal){
+      const ro=target.form?.querySelector('[name="roId"]');
+      if(ro) refreshROOptions(target,ro);
+    }
+    if(target.id==='af-backup-file') return;
+  });
+
+  document.addEventListener('input',function(e){
+    if(e.target.id==='af-command-search'){
+      const q=e.target.value.toLowerCase().trim();
+      document.querySelectorAll('.af-command-item').forEach((btn,i)=>btn.classList.toggle('hidden',q && !commandItems[i][0].toLowerCase().includes(q)));
+    }
+  });
+
+  /* Capture reset/delete clicks before the legacy confirm() path. */
+  document.addEventListener('click',function(e){
+    const el=e.target.closest('[data-action]'); if(!el) return;
+    const action=el.getAttribute('data-action');
+    if(action==='delete-customer'||action==='delete-ro'||action==='delete-amc'||action==='delete-service'||action==='delete-tech'){
+      e.preventDefault(); e.stopImmediatePropagation();
+      const kind=action.replace('delete-',''); deleteEntity(kind,el.getAttribute('data-id')); return;
+    }
+    if(action==='reset-data'){
+      e.preventDefault(); e.stopImmediatePropagation();
+      confirmAction('Reset sample data','Replace all local data with the original sample dataset? Your current browser data will be lost unless exported first.','Reset data','reset'); return;
+    }
+    if(action==='confirm-pending'){
+      e.preventDefault(); e.stopImmediatePropagation();
+      const p=pendingConfirm; pendingConfirm=null;
+      if(p?.action==='delete'){ performDelete(p.meta.kind,p.meta.id); }
+      else if(p?.action==='restore'){ applyRestore(); }
+      else if(p?.action==='reset'){ DB=seedData(); normalizeDB(); persist(); closeModal(); toast('Sample data restored'); render(); }
+      else if(p?.action==='logout'){ STATE.role=null; STATE.userId=null; STATE.username=''; STATE.technicianId=null; closeModal(); render(); }
+      return;
+    }
+    if(action==='open-command-palette'){ openCommandPalette(); return; }
+    if(action==='command-item'){ runCommand(el.getAttribute('data-command-index')); return; }
+    if(action==='restore-backup-open'){ openRestore(); return; }
+    if(action==='restore-backup'){ restoreBackup(); return; }
+    if(action==='diagnostics'){ showDiagnostics(); return; }
+    if(action==='print-service'){ printService(el.getAttribute('data-id')); return; }
+    if(action==='service-progress'){ progressService(el.getAttribute('data-id')); return; }
+  }, true);
+
+  /* ---------- enhanced settings view ---------- */
+  viewSettings=function(){
+    const s=DB.settings;
+    const permStatus=(typeof Notification!=='undefined'&&Notification.permission)||'unsupported';
+    return `
+    <div class="panel">
+      <div class="panel-head"><h2>Notifications & reminders</h2><span class="badge b-teal">Local</span></div>
+      <div class="panel-body">
+        <p class="muted" style="margin-top:0">Control in-app reminders for services and AMC renewals. Browser notifications are optional and remain on this device.</p>
+        <label style="display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:12px"><input type="checkbox" style="width:auto" ${s.pushEnabled?'checked':''} onchange="togglePushEnabled(this.checked)"> Show due-today reminders when I open the app</label>
+        <div class="search-row"><button class="btn" data-action="enable-push">${ic('bell')} Enable browser notifications</button><span class="muted" style="font-size:12px">Status: ${permStatus==='granted'?'<span style="color:var(--green);font-weight:700">Allowed</span>':permStatus==='denied'?'<span style="color:var(--red);font-weight:700">Blocked</span>':permStatus==='unsupported'?'Not supported in this preview':'Not yet requested'}</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Business settings</h2></div>
+      <div class="panel-body"><form data-action="submit-settings">
+        <div class="field"><label>Company name</label><input name="companyName" value="${escAttr(s.companyName)}" required></div>
+        <div class="field-row"><div class="field"><label>Service reminder days</label><input name="serviceReminderDays" value="${escAttr((s.serviceReminderDays||[]).join(', '))}" placeholder="1, 2, 3, 7"></div><div class="field"><label>AMC reminder days</label><input name="amcReminderDays" value="${escAttr((s.amcReminderDays||[]).join(', '))}" placeholder="60, 30, 15, 7, 1"></div></div>
+        <button class="btn primary" type="submit">${ic('check')} Save settings</button>
+      </form></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Data safety</h2><span class="badge b-green">Browser storage</span></div>
+      <div class="panel-body">
+        <p class="muted" style="margin-top:0">Your current dataset is stored locally in this browser. Export a backup before resetting or moving to another computer.</p>
+        <div class="cards-row" style="margin-bottom:14px">
+          <div class="stat-card"><div class="label">Customers</div><div class="value">${DB.customers.length}</div></div>
+          <div class="stat-card"><div class="label">Services</div><div class="value">${DB.services.length}</div></div>
+          <div class="stat-card"><div class="label">Local version</div><div class="value" style="font-size:18px">${APP_VERSION}</div></div>
+        </div>
+        <div class="search-row">
+          <button class="btn" data-action="export-json">${ic('download')} Export JSON</button>
+          <button class="btn" data-action="restore-backup-open">${ic('download')} Restore JSON</button>
+          <button class="btn" data-action="diagnostics">${ic('shield')} Run diagnostics</button>
+          <button class="btn danger" data-action="reset-data">${ic('trash')} Reset sample data</button>
+        </div>
+        <div class="muted" style="font-size:11px;margin-top:12px">Last local save: ${window.__afLastSaved.toLocaleString('en-IN')}</div>
+      </div>
+    </div>`;
+  };
+
+  /* ---------- patch admin shell after every render ---------- */
+  const baseRender=render;
+  render=function(){
+    baseRender();
+    requestAnimationFrame(()=>{
+      updateSaveIndicator();
+      if(document.querySelector('.topbar .actions') && !document.getElementById('af-command-btn')){
+        const actions=document.querySelector('.topbar .actions');
+        const b=document.createElement('button'); b.id='af-command-btn'; b.className='icon-btn'; b.type='button'; b.dataset.action='open-command-palette'; b.title='Quick navigation (Ctrl+K)'; b.setAttribute('aria-label','Quick navigation'); b.innerHTML=ic('search'); actions.prepend(b);
+      }
+      if(document.querySelector('.topbar .actions') && !document.getElementById('af-save-status')){
+        const span=document.createElement('span'); span.id='af-save-status'; span.className='af-save-status'; span.textContent='Saved locally'; document.querySelector('.topbar .actions').prepend(span);
+      }
+      document.querySelectorAll('[data-action="view-service"]').forEach(row=>{
+        const id=row.getAttribute('data-id');
+        if(row.querySelector('[data-action="print-service"]')) return;
+      });
+    });
+  };
+
+  /* ---------- inject action controls into service detail ---------- */
+  const baseViewServiceDetail=viewServiceDetail;
+  viewServiceDetail=function(id,mode){
+    let html=baseViewServiceDetail(id,mode);
+    const s=byId(DB.services,id);
+    if(!s) return html;
+    const tools=`<div class="af-service-tools"><button class="btn sm" data-action="print-service" data-id="${htmlEscape(id)}">${ic('download')} Print job card</button>${s.status!=='Completed'&&s.status!=='Cancelled'?`<button class="btn sm primary" data-action="service-progress" data-id="${htmlEscape(id)}">${ic('bolt')} Move workflow</button>`:''}</div>`;
+    const anchor='</button>\n  <div class="panel">';
+    if(html.includes(anchor)) return html.replace(anchor,`</button>${tools}\n  <div class="panel">`);
+    return html+tools;
+  };
+
+  /* ---------- service form: active techs only + better hints ---------- */
+  const baseServiceForm=serviceForm;
+  serviceForm=function(id){
+    baseServiceForm(id);
+    requestAnimationFrame(()=>{
+      const f=document.querySelector('#modal-root form[data-action="submit-service"]');
+      if(!f)return;
+      const tech=f.querySelector('[name="technicianId"]');
+      if(tech){ [...tech.options].forEach(o=>{if(o.value){const t=byId(DB.technicians,o.value); if(t?.status==='Inactive') o.disabled=true;}}); }
+      const customer=f.querySelector('[name="customerId"]'), ro=f.querySelector('[name="roId"]');
+      if(customer&&ro) refreshROOptions(customer,ro);
+    });
+  };
+
+  /* ---------- make login role/account affordance clearer ---------- */
+  const baseGateHTML=gateHTML;
+  gateHTML=function(){
+    const html=baseGateHTML();
+    return html.replace('</form>', '<div class="af-local-mode">'+ic('shield')+' Local browser mode · Data stays on this device</div></form>');
+  };
+
+  /* ---------- add a small global offline/local indicator ---------- */
+  window.addEventListener('online',()=>toast('Connection restored')); window.addEventListener('offline',()=>toast('Offline mode — local data continues to work'));
+
+  /* ---------- final initialization ---------- */
+  try { DB.version=APP_VERSION; DB.meta=DB.meta||{}; DB.meta.updatedAt=DB.meta.updatedAt||new Date().toISOString(); } catch(_){ }
+})();
+
+
+/* =====================================================================
+   AquaFlow V9 — optional production API bridge
+   Local-first remains available when the API is not running.
+   ===================================================================== */
+(function AquaFlowV9Bridge(){
+  'use strict';
+  const API_BASE = window.AQUAFLOW_API_BASE || '/api';
+  let serverOnline=false, csrf=''; let syncTimer=null; let syncing=false;
+  window.AquaFlow = Object.assign(window.AquaFlow||{}, {apiBase:API_BASE, serverMode:false});
+  const api = async (path, options={})=>{
+    const opts={credentials:'same-origin', headers:{'Content-Type':'application/json', ...(options.headers||{})}, ...options};
+    if(csrf && !['GET','HEAD'].includes((opts.method||'GET').toUpperCase())) opts.headers['X-CSRF-Token']=csrf;
+    const r=await fetch(API_BASE+path,opts); const ct=r.headers.get('content-type')||'';
+    const body=ct.includes('application/json')?await r.json():await r.text();
+    if(!r.ok) throw new Error(body?.detail||body?.message||`HTTP ${r.status}`); return body;
+  };
+  async function probe(){try{const h=await api('/health');serverOnline=!!h.ok; window.AquaFlow.serverMode=serverOnline; window.AquaFlow.serverHealth=h; return true;}catch(e){serverOnline=false;window.AquaFlow.serverMode=false;return false;}}
+  async function loginServer(username,password,role){
+    const out=await api('/auth/login',{method:'POST',body:JSON.stringify({username,password,role})});
+    csrf=out.csrf_token||''; sessionStorage.setItem('aquaflow_csrf',csrf); serverOnline=true; window.AquaFlow.serverMode=true; return out;
+  }
+  async function pull(){const out=await api('/bootstrap'); if(out?.data){DB=out.data; if(!DB.notificationsRead)DB.notificationsRead={}; if(!DB.notificationsDismissed)DB.notificationsDismissed={}; persistLocalOnly();} return out;}
+  function persistLocalOnly(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(DB));window.__afLastSaved=new Date();}catch(e){}}
+  const originalPersist = persist;
+  persist = function(){ originalPersist(); queueSync(); };
+  function queueSync(){ if(!serverOnline || !STATE.role) return; clearTimeout(syncTimer); syncTimer=setTimeout(sync,500); }
+  async function sync(){ if(syncing||!serverOnline||!STATE.role)return; syncing=true; document.body.classList.add('af-syncing'); try{await api('/sync',{method:'POST',body:JSON.stringify({data:DB})}); window.__afLastSaved=new Date();}catch(e){serverOnline=false;window.AquaFlow.serverMode=false;} finally{syncing=false;document.body.classList.remove('af-syncing'); updateSaveIndicator?.();}}
+  const localLogin = loginUser;
+  loginUser = async function(form){
+    const data=formToObj(form); const role=data.role||STATE.loginRole||'admin'; const username=String(data.username||'').trim(), password=String(data.password||'');
+    if(!username||!password){toast('Enter user ID and password');return;}
+    try{
+      if(await probe()){
+        const out=await loginServer(username,password,role);
+        STATE.role=out.user.role; STATE.loginRole=out.user.role; STATE.userId=out.user.id; STATE.username=out.user.username; STATE.technicianId=out.user.technician_id||null;
+        await pull(); STATE.adminView='dashboard';STATE.techView='today';STATE.activeCustomerId=null;STATE.activeServiceId=null;STATE.activeTechServiceId=null;STATE.sidebarOpen=false;
+        toast('Signed in securely'); render(); return;
+      }
+    }catch(e){ toast(e.message||'Server login failed'); return; }
+    // Explicit local demo fallback only when API is unavailable.
+    localLogin(form);
+  };
+  const originalLogout = ()=>{};
+  document.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault(); if(STATE.role) openCommandPalette();} });
+  window.AquaFlowV9={probe,pull,sync,api,get serverOnline(){return serverOnline;}};
+  // Restore CSRF token from prior same-tab session and expose a server status pill.
+  csrf=sessionStorage.getItem('aquaflow_csrf')||'';
+  const oldRender=render;
+  render=function(){oldRender();requestAnimationFrame(()=>{
+    const actions=document.querySelector('.topbar .actions'); if(actions&&!document.getElementById('af-server-pill')){const p=document.createElement('span');p.id='af-server-pill';p.className='af-server-pill '+(serverOnline?'online':'offline');p.innerHTML='<span class="dot"></span><span>'+ (serverOnline?'Server connected':'Local mode')+'</span>';actions.prepend(p);}
+    const p=document.getElementById('af-server-pill'); if(p){p.className='af-server-pill '+(serverOnline?'online':'offline');p.innerHTML='<span class="dot"></span><span>'+ (serverOnline?'Server connected':'Local mode')+'</span>';}
+  });};
+  // Probe without blocking first paint; authenticated sessions are restored from cookie.
+  (async()=>{try{if(await probe()){try{const me=await api('/auth/me'); if(me?.user){csrf=sessionStorage.getItem('aquaflow_csrf')||'';STATE.role=me.user.role;STATE.loginRole=me.user.role;STATE.userId=me.user.id;STATE.username=me.user.username;STATE.technicianId=me.user.technician_id||null;await pull();}}catch(_){}}}catch(_){} finally{render();}})();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{
+  "product": "AquaFlow Professional",
+  "version": "9.0.0",
+  "build_date": "2026-09-26",
+  "files": [
+    {
+      "file": "aquaflow.db",
+      "bytes": 167936,
+      "sha256": "8c250045cd0e3e86871d76aaf604b3c2784743e9c063b5758146881841dcf4f4"
+    },
+    {
+      "file": "start-local.bat",
+      "bytes": 444,
+      "sha256": "dc933264b5d92aaf2c2ad2862db60d8a318f68507efb3344fe3a0e73a60ce54d"
+    },
+    {
+      "file": "index.html",
+      "bytes": 181844,
+      "sha256": "7733d12d24c74046b04e5487ee6617bf2a9c12ed226370da1b0a9222f6a75b32"
+    },
+    {
+      "file": "Dockerfile",
+      "bytes": 326,
+      "sha256": "d74c171eeb7ccebf53a8638a40d8ac7a820b070041417577bd148372a5ab80f8"
+    },
+    {
+      "file": "VERSION.txt",
+      "bytes": 55,
+      "sha256": "ebc32c4f2aa76de96cc38336dd9158521ef1603b0cde81f18b3caa876e557959"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "bytes": 585,
+      "sha256": "4f27d4002c74eee074788aa8a437ef6ea188beb08679bead80cbd5ea8b7b0e27"
+    },
+    {
+      "file": "QA-TEST-PLAN.md",
+      "bytes": 1412,
+      "sha256": "0be076b754af5b8cdc659b45fe9562778d1eccd34be02a74134f3a8f8008ee34"
+    },
+    {
+      "file": "start-professional.bat",
+      "bytes": 201,
+      "sha256": "75fb68d537d2f7fc023e02297a06a8840106216e38b9680839389962d8e6d798"
+    },
+    {
+      "file": "DEPLOYMENT.md",
+      "bytes": 1259,
+      "sha256": "0171d89efa4248057745d7e30cdb593fd366872a328cec5fa84a68ad2999f903"
+    },
+    {
+      "file": "docker-compose.yml",
+      "bytes": 248,
+      "sha256": "cff598662a5f360e21f210b316913760a7a0242e71c1851825866943447e4f1a"
+    },
+    {
+      "file": "README.md",
+      "bytes": 2084,
+      "sha256": "aa325c2f94ee99f677a3458bbce83a9850d88058f302044fdfbe8e3f634a1e0b"
+    },
+    {
+      "file": "database.sql",
+      "bytes": 5947,
+      "sha256": "a68d15324abd29e67e663522118e02665205086a6d375638f7595c0b54ab2830"
+    },
+    {
+      "file": "backend/requirements.txt",
+      "bytes": 72,
+      "sha256": "d75bfab0297eb95c994c3a692095b5507a5eab59a40c0f8ea11a11043d2018a5"
+    },
+    {
+      "file": "backend/run.py",
+      "bytes": 81,
+      "sha256": "b181c5cbd1b967e490d6abdf3a906badf8d98da3132ab27a9b04e9ff292859d1"
+    },
+    {
+      "file": "backend/app.py",
+      "bytes": 15489,
+      "sha256": "c50319eceab957ec1476692585747e464ecea5835066324021eef4bf341e81d8"
+    },
+    {
+      "file": "backend/.env.example",
+      "bytes": 143,
+      "sha256": "b9d935ec304378ddbe47e5d9ed18028f83024da23714d836f055c6d202866c57"
+    },
+    {
+      "file": ".pytest_cache/CACHEDIR.TAG",
+      "bytes": 191,
+      "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+    },
+    {
+      "file": ".pytest_cache/.gitignore",
+      "bytes": 37,
+      "sha256": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd"
+    },
+    {
+      "file": ".pytest_cache/README.md",
+      "bytes": 302,
+      "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+    },
+    {
+      "file": ".pytest_cache/v/cache/nodeids",
+      "bytes": 157,
+      "sha256": "d2b622cbbdc7da313b53c82715663ee1787d747a15e7e8ff5482ff898a5a6ea8"
+    },
+    {
+      "file": "backend/tests/test_api.py",
+      "bytes": 1079,
+      "sha256": "eb8d032ceb25eda990ac98b9d2f45c403bb742b6782f0aace844385bef0524d6"
+    }
+  ]
+}

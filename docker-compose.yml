@@ -1,0 +1,12 @@
+services:
+  aquaflow:
+    build: .
+    ports:
+      - "8799:8799"
+    environment:
+      AQUAFLOW_DB: /app/data/aquaflow.db
+      AQUAFLOW_SECRET: change-this-before-production
+    volumes:
+      - aquaflow_data:/app/data
+volumes:
+  aquaflow_data:
